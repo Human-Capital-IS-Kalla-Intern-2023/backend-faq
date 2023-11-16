@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('question', 255)->unique();
             $table->string('slug', 255)->unique();
             $table->text('answer');
-            $table->integer('like');
-            $table->integer('dislike');
+            $table->integer('like')->default(0);
+            $table->integer('dislike')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });
