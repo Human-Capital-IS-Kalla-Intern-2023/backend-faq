@@ -11,4 +11,10 @@ class Topic extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
+
+    public function questions()
+    {
+        return $this->belongsToMany(Question::class, 'topic_questions');
+    }
+
 }
