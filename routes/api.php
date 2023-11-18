@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\FaqController;
+use App\Http\Controllers\API\QuestionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,12 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+
+Route::get('faq/questions', [QuestionController::class, 'index']);
+Route::post('faq/questions', [QuestionController::class, 'store']);
+Route::delete('faq/questions/{question:slug}', [QuestionController::class, 'destroy']);
+// Route::get()
 
 
 Route::get('faq', [FaqController::class, 'index']);

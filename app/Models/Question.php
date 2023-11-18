@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Question extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $guarded = [];
 
     public function topics()
     {
-        return $this->belongsToMany(Topic::class, 'topic_questions');
+        return $this->belongsToMany(Topic::class, 'topic_questions')->withTimestamps();;
     }
 
     public function addLike()

@@ -21,7 +21,7 @@ class FaqController extends Controller
             'status' => 'success',
             'message' => 'Data topik berhasil diambil',
             'data' => $topics,
-        ]);
+        ], 200);
     }
 
     public function topic(Topic $topic)
@@ -34,7 +34,7 @@ class FaqController extends Controller
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
             'data' => $questions,
-        ]);
+        ], 200);
     }
 
     public function question(Topic $topic, Question  $question)
@@ -45,7 +45,7 @@ class FaqController extends Controller
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
             'data' => $question,
-        ]);
+        ], 200);
     }
 
     public function like(Topic $topic,Question  $question)
@@ -57,7 +57,7 @@ class FaqController extends Controller
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
             'data' => $question,
-        ]);
+        ], 200);
     }
 
     public function dislike(Topic $topic, Question  $question)
@@ -69,7 +69,7 @@ class FaqController extends Controller
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
             'data' => $question,
-        ]);
+        ], 200);
     }
 
 }
