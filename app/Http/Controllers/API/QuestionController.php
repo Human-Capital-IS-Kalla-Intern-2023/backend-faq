@@ -77,6 +77,12 @@ class QuestionController extends Controller
     }
 
     public function store(Request $request) {
+        $validation = $request->validate([
+            'question' => ['required','unique:questions,question','string'],
+            'answer' => ['required'],
+            'topic_id' => ['array','exists:topics,id,deleted_at,NULL']
+        ]);
+
         DB::beginTransaction();
 
         try {
@@ -113,6 +119,13 @@ class QuestionController extends Controller
     }
 
     public function update(Request $request, Question $question) {
+
+        $validation = $request->validate([
+            'question' => ['required','unique:questions,question,'.$question->slug.',slug','string'],
+            'answer' => ['required'],
+            'topic_id' => ['array','exists:topics,id,deleted_at,NULL']
+        ]);
+
         DB::beginTransaction();
 
         try {
@@ -129,11 +142,10 @@ class QuestionController extends Controller
             // Ambil id topik yang baru dari form
             $topicIds = $request->input('topic_id');
 
-
             $question->topics()->sync($topicIds);
 
     
-            // DB::commit();
+            DB::commit();
     
             return response()->json([
                 'status_code' => 200,
