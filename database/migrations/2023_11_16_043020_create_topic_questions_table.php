@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('topic_questions', function (Blueprint $table) {
-            // $table->id();
+            $table->id();
             $table->unsignedBigInteger('topic_id');
             $table->unsignedBigInteger('question_id');
             $table->timestamps();
@@ -22,8 +22,8 @@ return new class extends Migration
             $table->foreign('topic_id')->references('id')->on('topics')->onDelete('cascade');
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
             
-            // Kunci gabungan sebagai kunci primer
-            $table->primary(['topic_id', 'question_id']);
+            // Define  composite key -> untuk mencegah data ganda
+            $table->unique(['topic_id','question_id']);
         });
     }
 
