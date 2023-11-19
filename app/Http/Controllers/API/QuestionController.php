@@ -10,8 +10,18 @@ use Illuminate\Support\Str;
 
 class QuestionController extends Controller
 {
-    public function index() {
-        $questions = Question::with('topics')->get();
+    public function index(Request $request) {
+        
+        $search = $request->get('search'); 
+
+        if ($search) {
+            $questions = Question::search($search)->get();
+
+            // Memuat relasi topics untuk setiap pertanyaan
+            $questions->load('topics');
+        } else {
+            $questions = Question::with('topics')->get();
+        }
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
         $transformedQuestions = $questions->map(function ($question) {

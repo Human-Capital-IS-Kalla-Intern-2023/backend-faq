@@ -12,15 +12,25 @@ class FaqController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $topics = Topic::all();
+        $search = $request->get('search'); 
+
+        if ($search) {
+            $topics = Topic::search($search)->get();
+            $questions = Question::search($search)->get();
+        
+            $combinedResults = $topics->merge($questions);
+        } else {
+            $topics =Topic::get();
+        }
+        // $topics = Topic::all();
 
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data topik berhasil diambil',
-            'data' => $topics,
+            'data' => $combinedResults,
         ], 200);
     }
 
