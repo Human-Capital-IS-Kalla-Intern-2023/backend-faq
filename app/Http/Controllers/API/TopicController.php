@@ -38,11 +38,11 @@ class TopicController extends Controller
         $validation = $request->validate([
             'name' => ['required', 'unique:topics,name', 'string'],
             'description' => ['required', 'string'],
-            'image' => ['required','image','mimes:png,jpg,jpeg,svg','max:1024'],
+            'image' => ['required', 'image', 'mimes:png,jpg,jpeg,svg', 'max:1024'],
         ]);
 
-        $imageName = time().'.'.$request->image->extension(); 
-        
+        $imageName = time() . '.' . $request->image->extension();
+
         // Simpan gambar di folder Storage:
         $request->image->storeAs('images', $imageName);
 
@@ -66,7 +66,7 @@ class TopicController extends Controller
      */
     public function show(Topic $topic)
     {
-        $topic =Topic::where('slug', $topic->slug)->with('questions')->first();
+        $topic = Topic::where('slug', $topic->slug)->with('questions')->first();
 
         return response()->json([
             'status_code' => 200,
@@ -82,9 +82,9 @@ class TopicController extends Controller
     public function update(Request $request, Topic $topic)
     {
         $validation = $request->validate([
-            'name' => ['required','unique:topics,name,'.$topic->slug.',slug','string'],
+            'name' => ['required', 'unique:topics,name,' . $topic->slug . ',slug', 'string'],
             'description' => ['required', 'string'],
-            'image' => ['required','image','mimes:png,jpg,jpeg,svg','max:1024'],
+            'image' => ['image', 'mimes:png,jpg,jpeg,svg', 'max:1024'],
 
         ]);
 
@@ -92,11 +92,11 @@ class TopicController extends Controller
 
         try {
             // Ambil pertanyaan yang akan diupdate
-            $topic =Topic::where('slug', $topic->slug)->first();
-    
+            $topic = Topic::where('slug', $topic->slug)->first();
+
             $topic->name = $request->input('name');
             $topic->description = $request->input('description');
-        
+
             // Mengelola gambar jika diunggah
             if ($request->hasFile('image')) {
                 // Hapus gambar dari penyimpanan
@@ -105,17 +105,17 @@ class TopicController extends Controller
                 }
 
                 $image = $request->file('image');
-                $imageName = time().'.'.$image->extension();
+                $imageName = time() . '.' . $image->extension();
                 $image->storeAs('images', $imageName);
                 $topic->image = $imageName;
             }
-        
+
             $topic->save();
 
 
-    
+
             DB::commit();
-    
+
             return response()->json([
                 'status_code' => 200,
                 'status' => 'success',
@@ -124,7 +124,7 @@ class TopicController extends Controller
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-    
+
             // Handle the exception, log it, or return an error response
             return response()->json([
                 'status_code' => 500,
@@ -140,9 +140,9 @@ class TopicController extends Controller
     public function destroy(Topic $topic)
     {
 
-        $topic =Topic::where('slug', $topic->slug)->first();
+        $topic = Topic::where('slug', $topic->slug)->first();
 
-            // Hapus gambar dari penyimpanan
+        // Hapus gambar dari penyimpanan
         if ($topic->image) {
             Storage::delete('public/images/' . $topic->image);
         }
