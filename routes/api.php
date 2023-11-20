@@ -20,11 +20,11 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('faq/topics', [TopicsController::class, 'index']);
-Route::post('faq/topics', [TopicsController::class, 'store']);
-Route::get('faq/topics/{topic:slug}', [TopicsController::class, 'show']);
-Route::put('faq/topics/{topic:slug}', [TopicsController::class, 'update']);
-Route::delete('faq/topics/{topic:slug}', [TopicsController::class, 'destroy']);
+Route::get('faq/topics', [TopicController::class, 'index']);
+Route::post('faq/topics', [TopicController::class, 'store']);
+Route::get('faq/topics/{topic:slug}', [TopicController::class, 'show']);
+Route::put('faq/topics/{topic:slug}', [TopicController::class, 'update']);
+Route::delete('faq/topics/{topic:slug}', [TopicController::class, 'destroy']);
 
 Route::get('faq/questions', [QuestionController::class, 'index']);
 Route::post('faq/questions', [QuestionController::class, 'store']);
