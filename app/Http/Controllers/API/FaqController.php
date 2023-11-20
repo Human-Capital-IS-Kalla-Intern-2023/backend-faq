@@ -22,7 +22,7 @@ class FaqController extends Controller
         
             $combinedResults = $topics->merge($questions);
         } else {
-            $topics =Topic::get();
+            $combinedResults =Topic::get();
         }
         // $topics = Topic::all();
 

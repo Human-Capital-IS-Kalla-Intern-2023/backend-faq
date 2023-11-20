@@ -1,7 +1,7 @@
 <?php
 
 
-use App\Http\Controllers\TopicsController;
+use App\Http\Controllers\API\TopicController;
 use App\Http\Controllers\API\FaqController;
 use App\Http\Controllers\API\QuestionController;
 use Illuminate\Http\Request;
@@ -20,8 +20,11 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('topic', [TopicsController::class, 'index']);
-Route::post('topic', [TopicsController::class, 'store']);
+Route::get('faq/topics', [TopicController::class, 'index']);
+Route::post('faq/topics', [TopicController::class, 'store']);
+Route::put('faq/topics/{topic:slug}', [TopicController::class, 'show']);
+Route::get('faq/topics/{topic:slug}', [TopicController::class, 'update']);
+Route::delete('faq/topics/{topic:slug}', [TopicController::class, 'delete']);
 
 Route::get('faq/questions', [QuestionController::class, 'index']);
 Route::post('faq/questions', [QuestionController::class, 'store']);

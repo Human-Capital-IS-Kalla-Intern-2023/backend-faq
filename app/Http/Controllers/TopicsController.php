@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Topic;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Stringable;
+
+use Illuminate\Support\Str;
+
 
 class TopicsController extends Controller
 {
@@ -48,7 +53,7 @@ class TopicsController extends Controller
             'status' => 'success',
             'message' => 'Topic berhasil ditambahkan',
             'data'  => $data,
-        ]);
+        ], 200);
     }
 
     /**
@@ -62,9 +67,45 @@ class TopicsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Topic $topic)
     {
-        //
+        $validation = $request->validate([
+            'name' => ['required','unique:topics,name,'.$topic->slug.',slug','string'],
+            'description' => ['required', 'string'],
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            // Ambil pertanyaan yang akan diupdate
+            $topic =Topic::where('slug', $topic->slug)->first();
+    
+            // Update atribut pertanyaan
+            $topic->update([
+                'name' => $request->input('name'),
+                'slug' => Str::slug($request->input('name')),
+                'description' => $request->input('description'),
+            ]);
+
+    
+            DB::commit();
+    
+            return response()->json([
+                'status_code' => 200,
+                'status' => 'success',
+                'message' => 'Data topic berhasil diubah',
+                'data' => $topic,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+    
+            // Handle the exception, log it, or return an error response
+            return response()->json([
+                'status_code' => 500,
+                'status' => 'Error',
+                'message' => 'Data gagal diubah',
+            ], 500);
+        }
     }
 
     /**
