@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\Controller;
 use App\Models\Topic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Stringable;
 
 use Illuminate\Support\Str;
 
-
-class TopicsController extends Controller
+class TopicController extends Controller
 {
     /**
      * Display a listing of the resource.
