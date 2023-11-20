@@ -1,7 +1,7 @@
 <?php
 
 
-use App\Http\Controllers\API\TopicsController;
+use App\Http\Controllers\API\TopicController;
 use App\Http\Controllers\API\FaqController;
 use App\Http\Controllers\API\QuestionController;
 use Illuminate\Http\Request;
