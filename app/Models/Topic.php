@@ -12,6 +12,9 @@ class Topic extends Model
 {
     use HasFactory, Searchable;
 
+    protected $fillable = ['name', 'slug', 'description', 'image'];
+    use HasFactory, Searchable;
+
     protected $guarded = [];
 
     public static function boot()
@@ -39,6 +42,4 @@ class Topic extends Model
             'description' => $this->description,
         ];
     }
-
-
 }
