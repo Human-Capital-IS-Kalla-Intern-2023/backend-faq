@@ -36,15 +36,21 @@ class TopicController extends Controller
     public function store(Request $request)
     {
         $validation = $request->validate([
-            'slug' => ['required', 'unique:topics, slug, NULL, id, deleted_at, NULL', 'string'],
-            'name' => ['required', 'unique:topics, name, NULL, id, deleted_at, NULL', 'string'],
-            'description' => ['required', 'unique:topics, description, NULL, id, deleted_at, NULL', 'string'],
+            'name' => ['required', 'unique:topics,name', 'string'],
+            'description' => ['required', 'string'],
+            'image' => ['required','image','mimes:png,jpg,jpeg,svg','max:1024'],
         ]);
 
+        $imageName = time().'.'.$request->image->extension(); 
+        
+        // Simpan gambar di folder Storage:
+        $request->image->storeAs('images', $imageName);
+
         $data = Topic::create([
-            'slug' => $validation['slug'],
             'name' => $validation['name'],
+            'slug' => Str::slug($validation['name']),
             'description' => $validation['description'],
+            'image' => $imageName,
         ]);
 
         return response()->json([
