@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Topic;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class TopicController extends Controller
@@ -64,9 +64,16 @@ class TopicController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Topic $topic)
     {
-        //
+        $topic =Topic::where('slug', $topic->slug)->with('questions')->first();
+
+        return response()->json([
+            'status_code' => 200,
+            'status' => 'success',
+            'message' => 'Data topic berhasil diambil',
+            'data' => $topic,
+        ], 200);
     }
 
     /**
@@ -77,6 +84,8 @@ class TopicController extends Controller
         $validation = $request->validate([
             'name' => ['required','unique:topics,name,'.$topic->slug.',slug','string'],
             'description' => ['required', 'string'],
+            'image' => ['required','image','mimes:png,jpg,jpeg,svg','max:1024'],
+
         ]);
 
         DB::beginTransaction();
@@ -85,12 +94,24 @@ class TopicController extends Controller
             // Ambil pertanyaan yang akan diupdate
             $topic =Topic::where('slug', $topic->slug)->first();
     
-            // Update atribut pertanyaan
-            $topic->update([
-                'name' => $request->input('name'),
-                'slug' => Str::slug($request->input('name')),
-                'description' => $request->input('description'),
-            ]);
+            $topic->name = $request->input('name');
+            $topic->description = $request->input('description');
+        
+            // Mengelola gambar jika diunggah
+            if ($request->hasFile('image')) {
+                // Hapus gambar dari penyimpanan
+                if ($topic->image) {
+                    Storage::delete('public/images/' . $topic->image);
+                }
+
+                $image = $request->file('image');
+                $imageName = time().'.'.$image->extension();
+                $image->storeAs('images', $imageName);
+                $topic->image = $imageName;
+            }
+        
+            $topic->save();
+
 
     
             DB::commit();
@@ -116,8 +137,24 @@ class TopicController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Topic $topic)
     {
-        //
+
+        $topic =Topic::where('slug', $topic->slug)->first();
+
+            // Hapus gambar dari penyimpanan
+        if ($topic->image) {
+            Storage::delete('public/images/' . $topic->image);
+        }
+
+        // Hapus data dari database
+        $topic->delete();
+
+        return response()->json([
+            'status_code' => 200,
+            'status' => 'success',
+            'message' => 'Data topic berhasil dihapus',
+            'data' => $topic,
+        ], 200);
     }
 }
