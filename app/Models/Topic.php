@@ -12,6 +12,8 @@ class Topic extends Model
 {
     use HasFactory, SoftDeletes, Searchable;
 
+    protected $fillable = ['name', 'slug', 'description', 'image'];
+
     protected $guarded = [];
 
     public function questions()
@@ -26,5 +28,4 @@ class Topic extends Model
             'description' => $this->description,
         ];
     }
-
 }
