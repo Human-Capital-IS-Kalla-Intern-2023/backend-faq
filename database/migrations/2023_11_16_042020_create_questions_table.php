@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('question', 255)->unique();
             $table->string('slug', 255)->unique();
             $table->longText('answer');
-            $table->boolean('is_active')->default(1);
+            $table->boolean('is_status')->default(1);
             $table->timestamps();
             // $table->softDeletes();
         });

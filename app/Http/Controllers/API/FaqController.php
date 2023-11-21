@@ -18,12 +18,12 @@ class FaqController extends Controller
         $search = $request->get('search'); 
 
         if ($search) {
-            $topics = Topic::search($search)->where('is_active', 1)->get();
-            $questions = Question::search($search)->where('is_active', 1)->get();
+            $topics = Topic::search($search)->where('is_status', 1)->get();
+            $questions = Question::search($search)->where('is_status', 1)->get();
         
             $combinedResults = [$topics, $questions];
         } else {
-            $combinedResults =Topic::where('is_active', 1)->get();
+            $combinedResults =Topic::where('is_status', 1)->get();
         }
         
 
@@ -37,7 +37,7 @@ class FaqController extends Controller
 
     public function topic(String $slug)
     {
-        $topic = Topic::where('is_active', 1)->first();
+        $topic = Topic::where('is_status', 1)->first();
 
         $questions = $topic->questions;
 
@@ -71,7 +71,7 @@ class FaqController extends Controller
                 'topics_slug' => $topic->slug,
                 'topics_description' => $topic->description,
                 'topics_image' => $topic->image,
-                'topics_is_active' => $topic->is_active,
+                'topics_is_status' => $topic->is_status,
             ];
         });
 
@@ -86,7 +86,7 @@ class FaqController extends Controller
 
     public function question(String $name, String $slug)
     {
-        $questions = Question::where('is_active', 1)->where('slug', $slug)->with('reviews')->get();
+        $questions = Question::where('is_status', 1)->where('slug', $slug)->with('reviews')->get();
 
         if(is_null($questions)) {
             return response()->json([
@@ -118,7 +118,7 @@ class FaqController extends Controller
                 'topics_slug' => $topic->slug,
                 'topics_description' => $topic->description,
                 'topics_image' => $topic->image,
-                'topics_is_active' => $topic->is_active,
+                'topics_is_status' => $topic->is_status,
             ];
         });
 
@@ -132,7 +132,7 @@ class FaqController extends Controller
 
     public function like(String $name, String $slug)
     {
-        $question = Question::where('is_active', 1)->where('slug', $slug)->first();
+        $question = Question::where('is_status', 1)->where('slug', $slug)->first();
 
         if(is_null($question)) {
             return response()->json([
@@ -159,7 +159,7 @@ class FaqController extends Controller
 
     public function dislike(String $name, String $slug)
     {
-        $question = Question::where('is_active', 1)->where('slug', $slug)->first();
+        $question = Question::where('is_status', 1)->where('slug', $slug)->first();
 
         if(is_null($question)) {
             return response()->json([

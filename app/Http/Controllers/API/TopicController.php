@@ -18,9 +18,9 @@ class TopicController extends Controller
     {
         $search = $request->get('search');
         if ($search) {
-            $topics = Topic::search($search)->where('is_active', 1)->get();
+            $topics = Topic::search($search)->where('is_status', 1)->get();
         } else {
-            $topics = Topic::where('is_active', 1)->get();
+            $topics = Topic::where('is_status', 1)->get();
         }
         return response()->json([
             'status_code' => 200,
@@ -66,7 +66,7 @@ class TopicController extends Controller
      */
     public function show(String $slug)
     {
-        $topic = Topic::where('slug', $slug)->where('is_active', 1)->with('questions')->first();
+        $topic = Topic::where('slug', $slug)->where('is_status', 1)->with('questions')->first();
         
         if(is_null($topic)) {
             return response()->json([
