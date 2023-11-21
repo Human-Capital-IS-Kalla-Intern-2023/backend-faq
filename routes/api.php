@@ -22,23 +22,23 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('faq/topics', [TopicController::class, 'index']);
 Route::post('faq/topics', [TopicController::class, 'store']);
-Route::get('faq/topics/{topic:slug}', [TopicController::class, 'show']);
-Route::put('faq/topics/{topic:slug}', [TopicController::class, 'update']);
-Route::delete('faq/topics/{topic:slug}', [TopicController::class, 'destroy']);
+Route::get('faq/topics/{slug}', [TopicController::class, 'show']);
+Route::put('faq/topics/{slug}', [TopicController::class, 'update']);
+Route::delete('faq/topics/{slug}', [TopicController::class, 'destroy']);
 
 Route::get('faq/questions', [QuestionController::class, 'index']);
 Route::post('faq/questions', [QuestionController::class, 'store']);
-Route::get('faq/questions/{question:slug}', [QuestionController::class, 'show']);
-Route::put('faq/questions/{question:slug}', [QuestionController::class, 'update']);
-Route::delete('faq/questions/{question:slug}', [QuestionController::class, 'destroy']);
+Route::get('faq/questions/{slug}', [QuestionController::class, 'show']);
+Route::put('faq/questions/{slug}', [QuestionController::class, 'update']);
+Route::delete('faq/questions/{slug}', [QuestionController::class, 'destroy']);
 
 
 Route::get('faq', [FaqController::class, 'index']);
-Route::get('faq/{topic:slug}', [FaqController::class, 'topic']);
-Route::get('faq/{topic:slug}/{question:slug}', [FaqController::class, 'question']);
+Route::get('faq/{slug}', [FaqController::class, 'topic']);
+Route::get('faq/{slug}/{question:slug}', [FaqController::class, 'question']);
 
-Route::post('faq/{topic:slug}/{question:slug}/like', [FaqController::class, 'like'])->name('like');
-Route::post('faq/{topic:slug}/{question:slug}/dislike', [FaqController::class, 'dislike'])->name('dislike');
+Route::post('faq/{slug}/{slug}/like', [FaqController::class, 'like'])->name('like');
+Route::post('faq/{slug}/{slug}/dislike', [FaqController::class, 'dislike'])->name('dislike');
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
