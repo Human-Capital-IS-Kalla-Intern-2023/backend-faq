@@ -17,18 +17,6 @@ class Topic extends Model
 
     protected $guarded = [];
 
-    public static function boot()
-    {
-        parent::boot();
-
-        static::deleting(function ($topic) {
-            // Cek apakah topik memiliki relasi Many-to-Many dengan tabel pertanyaan
-            if ($topic->questions()->count() > 0) {
-                // Jika ada, batalkan penghapusan dan kembalikan pesan kesalahan
-                throw new \Exception('Topik tidak dapat dihapus karena masih terkait dengan pertanyaan.');
-            }
-        });
-    }
 
     public function questions()
     {

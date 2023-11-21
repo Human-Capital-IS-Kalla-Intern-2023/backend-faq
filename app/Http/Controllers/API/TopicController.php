@@ -17,16 +17,16 @@ class TopicController extends Controller
     public function index(Request $request)
     {
         $search = $request->get('search');
-
-        $topic = Topic::query()->when($search, function ($query) use ($search) {
-            $query->where('slug', 'LIKE', "%" . $search . "%");
-        })->get();
-
+        if ($search) {
+            $topics = Topic::search($search)->where('is_active', 1)->get();
+        } else {
+            $topics = Topic::where('is_active', 1)->get();
+        }
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data Topic berhasil diambil',
-            'data' => $topic,
+            'data' => $topics,
         ], 200);
     }
 
@@ -64,9 +64,19 @@ class TopicController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Topic $topic)
+    public function show(String $slug)
     {
-        $topic = Topic::where('slug', $topic->slug)->with('questions')->first();
+        $topic = Topic::where('slug', $slug)->where('is_active', 1)->with('questions')->first();
+        
+        if(is_null($topic)) {
+            return response()->json([
+                'status_code' => 404,
+                'status' => 'Error',
+                'message' => 'Data not found',
+                'data' => null,
+            ], 404);
+        }
+
 
         return response()->json([
             'status_code' => 200,
