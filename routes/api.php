@@ -34,11 +34,11 @@ Route::delete('faq/questions/{slug}', [QuestionController::class, 'destroy']);
 
 
 Route::get('faq', [FaqController::class, 'index']);
-Route::get('faq/{slug}', [FaqController::class, 'topic']);
-Route::get('faq/{slug}/{question:slug}', [FaqController::class, 'question']);
+Route::get('faq/{name}', [FaqController::class, 'topic']);
+Route::get('faq/{name}/{slug}', [FaqController::class, 'question']);
 
-Route::post('faq/{slug}/{slug}/like', [FaqController::class, 'like'])->name('like');
-Route::post('faq/{slug}/{slug}/dislike', [FaqController::class, 'dislike'])->name('dislike');
+Route::post('faq/{name}/{slug}/like', [FaqController::class, 'like'])->name('like');
+Route::post('faq/{name}/{slug}/dislike', [FaqController::class, 'dislike'])->name('dislike');
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();

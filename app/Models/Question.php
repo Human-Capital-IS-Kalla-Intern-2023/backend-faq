@@ -19,6 +19,11 @@ class Question extends Model
         return $this->belongsToMany(Topic::class, 'topic_questions')->withTimestamps();;
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function toSearchableArray(): array
     {
         return [
@@ -28,23 +33,4 @@ class Question extends Model
         ];
     }
 
-    public function addLike()
-    {
-        $this->increment('likes');
-    }
-
-    public function removeLike()
-    {
-        $this->decrement('likes');
-    }
-
-    public function addDislike()
-    {
-        $this->increment('dislikes');
-    }
-
-    public function removeDislike()
-    {
-        $this->decrement('dislikes');
-    }
 }
