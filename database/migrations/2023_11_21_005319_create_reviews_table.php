@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('questions', function (Blueprint $table) {
+        Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->string('question', 255)->unique();
-            $table->string('slug', 255)->unique();
-            $table->longText('answer');
-            $table->boolean('is_active')->default(1);
+            $table->foreignId('question_id')->constrained()->onDelete('cascade');
+            $table->boolean('likes');
             $table->timestamps();
-            // $table->softDeletes();
         });
     }
 
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('questions');
+        Schema::dropIfExists('reviews');
     }
 };
