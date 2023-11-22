@@ -29,13 +29,13 @@ class FaqController extends Controller
         $transformedTopic = $combinedResults->map(function ($item) {
             // Assuming $item could be either a Topic or a Question model
             return [
-                'topics_id' => $item->id,
-                'topics_name' => $item->name,
-                'topics_slug' => $item->slug,
-                'topics_description' => $item->description,
-                'topics_image' => $item->image,
-                'topics_icon' => $item->icon,
-                'topics_is_active' => $item->is_active,
+                'topic_id' => $item->id,
+                'topic_name' => $item->name,
+                'topic_slug' => $item->slug,
+                'topic_description' => $item->description,
+                'topic_image' => $item->image,
+                'topic_icon' => $item->icon,
+                'topic_is_active' => $item->is_active,
                 'created_at' => $item->created_at,
                 'updated_at' => $item->updated_at,
             ];
@@ -71,20 +71,20 @@ class FaqController extends Controller
             $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
             return [
-                'id' => $question->id,
+                'question_id' => $question->id,
                 'question' => $question->question,
-                'slug' => $question->slug,
-                'answer' => $question->answer,
+                'question_slug' => $question->slug,
+                'question_answer' => $question->answer,
                 'likes' => $likesCount,
                 'dislikes' => $dislikesCount,
                 'created_at' => $question->created_at,
                 'updated_at' => $question->updated_at,
-                'topics_id' => $topic->id,
-                'topics_name' => $topic->name,
-                'topics_slug' => $topic->slug,
-                'topics_description' => $topic->description,
-                'topics_image' => $topic->image,
-                'topics_is_active' => $topic->is_active,
+                'topic_id' => $topic->id,
+                'topic_name' => $topic->name,
+                'topic_slug' => $topic->slug,
+                'topic_description' => $topic->description,
+                'topic_image' => $topic->image,
+                'topic_is_active' => $topic->is_active,
             ];
         });
 
@@ -118,20 +118,20 @@ class FaqController extends Controller
             $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
             return [
-                'id' => $question->id,
+                'question_id' => $question->id,
                 'question' => $question->question,
-                'slug' => $question->slug,
-                'answer' => $question->answer,
+                'question_slug' => $question->slug,
+                'question_answer' => $question->answer,
                 'likes' => $likesCount,
                 'dislikes' => $dislikesCount,
                 'created_at' => $question->created_at,
                 'updated_at' => $question->updated_at,
-                'topics_id' => $topic->id,
-                'topics_name' => $topic->name,
-                'topics_slug' => $topic->slug,
-                'topics_description' => $topic->description,
-                'topics_image' => $topic->image,
-                'topics_is_active' => $topic->is_active,
+                'topic_id' => $topic->id,
+                'topic_name' => $topic->name,
+                'topic_slug' => $topic->slug,
+                'topic_description' => $topic->description,
+                'topic_image' => $topic->image,
+                'topic_is_active' => $topic->is_active,
             ];
         });
 
