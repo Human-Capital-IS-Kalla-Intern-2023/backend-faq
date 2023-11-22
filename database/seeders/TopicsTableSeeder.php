@@ -114,6 +114,7 @@ class TopicsTableSeeder extends Seeder
                 'updated_at' => date('Y-m-d H:i:s', time()),
             ],
             [
+                'user_id' => 1,
                 'name' => 'Partnership dan Kerjasama Bisnis',
                 'slug' => 'partnership-dan-kerjasama-bisnis',
                 'description' => 'Pertanyaan terkait dengan peluang kerjasama bisnis, afiliasi, atau program mitra.',
