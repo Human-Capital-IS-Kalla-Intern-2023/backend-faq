@@ -308,12 +308,6 @@ class TopicQuestionsTableSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s', time()),
                 'updated_at' => date('Y-m-d H:i:s', time()),
             ],
-            // [
-            //     'topic_id' => 10,
-            //     'question_id' => 50,
-            //     'created_at' => date('Y-m-d H:i:s', time()),
-            //     'updated_at' => date('Y-m-d H:i:s', time()),
-            // ],
             [
                 'topic_id' => 2,
                 'question_id' => 2,

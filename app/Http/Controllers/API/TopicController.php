@@ -181,11 +181,11 @@ class TopicController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Topic $topic)
+    public function update(Request $request, String $slug)
     {
         $validation = $request->validate([
             'user_id' => ['required', 'exists:users,id'],
-            'topic_name' => ['required', 'unique:topics,name,' . $topic->slug . ',slug', 'string'],
+            'topic_name' => ['required', 'unique:topics,name,' . $slug . ',slug', 'string'],
             'topic_description' => ['required', 'string'],
             'topic_image' => ['nullable','image', 'mimes:png,jpg,jpeg,svg', 'max:1024'],
             'topic_icon' => ['nullable', 'string'],
@@ -193,11 +193,20 @@ class TopicController extends Controller
 
         ]);
 
-        DB::beginTransaction();
+        // DB::beginTransaction();
 
-        try {
+        // try {
             // Ambil pertanyaan yang akan diupdate
-            $topic = Topic::where('slug', $topic->slug)->first();
+            $topic = Topic::where('is_status', 1)->where('slug', $slug)->first();
+
+            if(is_null($topic)) {
+                return response()->json([
+                    'status_code' => 404,
+                    'status' => 'Error',
+                    'message' => 'Data not found',
+                    'data' => null,
+                ], 404);
+            }
 
             $topic->user_id = $request->input('user_id');
             $topic->name = $request->input('topic_name');
@@ -229,16 +238,16 @@ class TopicController extends Controller
                 'message' => 'Data topic berhasil diubah',
                 'data' => $topic,
             ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
+        // } catch (\Exception $e) {
+        //     DB::rollBack();
 
-            // Handle the exception, log it, or return an error response
-            return response()->json([
-                'status_code' => 500,
-                'status' => 'Error',
-                'message' => 'Data gagal diubah',
-            ], 500);
-        }
+        //     // Handle the exception, log it, or return an error response
+        //     return response()->json([
+        //         'status_code' => 500,
+        //         'status' => 'Error',
+        //         'message' => 'Data gagal diubah',
+        //     ], 500);
+        // }
     }
 
     /**
