@@ -27,17 +27,19 @@ class QuestionController extends Controller
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
         $transformedQuestions = $questions->map(function ($question) {
             $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
+            $likesCount = $question->reviews()->where('likes', 1)->count();
+            $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
             return [
-                'id' => $question->id,
-                'question' => $question->question,
+                'question_id' => $question->id,
+                'user_id' => $question->user_id,
+                'question_name' => $question->question,
                 'question_slug' => $question->slug,
                 'question_answer' => $question->answer,
-                'likes' => $question->likes,
-                'dislikes' => $question->dislikes,
-                'created_at' => $question->created_at,
-                'updated_at' => $question->updated_at,
-                'deleted_at' => $question->deleted_at,
+                'likes' => $likesCount,
+                'dislikes' => $dislikesCount,
+                'created_at_question' => $question->created_at,
+                'updated_at_question' => $question->updated_at,
                 'topic_id' => $topic->id,
                 'topic_name' => $topic->name,
                 'topic_slug' => $topic->slug,
@@ -61,14 +63,17 @@ class QuestionController extends Controller
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
         $transformedQuestions = $questions->map(function ($question) {
             $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
+            $likesCount = $question->reviews()->where('likes', 1)->count();
+            $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
             return [
-                'id' => $question->id,
-                'question' => $question->question,
+                'question_id' => $question->id,
+                'user_id' => $question->user_id,
+                'question_name' => $question->question,
                 'question_slug' => $question->slug,
                 'question_answer' => $question->answer,
-                'likes' => $question->likes,
-                'dislikes' => $question->dislikes,
+                'likes' => $likesCount,
+                'dislikes' => $dislikesCount,
                 'created_at' => $question->created_at,
                 'updated_at' => $question->updated_at,
                 'deleted_at' => $question->deleted_at,
