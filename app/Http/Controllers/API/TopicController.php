@@ -28,9 +28,8 @@ class TopicController extends Controller
 
             return [
                 'topic_id' => $topic->id,
-                'topic_user_id' => $topic->user->id,
-                'topic_user_name' => $topic->user->name,
-                'topic_user_email' => $topic->user->email,
+                'topic_user_id' => $topic->user_id,
+                'topic_author' => $topic->user->name,
                 'topic_name' => $topic->name,
                 'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,
@@ -119,9 +118,8 @@ class TopicController extends Controller
 
             return [
                 'question_id' => $question->id,
-                'question_user_id' => $question->user->id,
-                'question_user_name' => $topic->user->name,
-                'question_user_email' => $topic->user->email,
+                'question_user_id' => $question->user_id,
+                'question_author' => $question->user->name,
                 'question_name' => $question->question,
                 'question_slug' => $question->slug,
                 'question_answer' => $question->answer,
@@ -130,9 +128,8 @@ class TopicController extends Controller
                 'question_created_at' => $question->created_at,
                 'question_updated_at' => $question->updated_at,
                 'topic_id' => $topic->id,
-                'topic_user_id' => $topic->user->id,
-                'topic_user_name' => $topic->user->name,
-                'topic_user_email' => $topic->user->email,
+                'topic_user_id' => $question->user_id,
+                'topic_author' => $topic->user->name,
                 'topic_name' => $topic->name,
                 'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,
@@ -154,11 +151,11 @@ class TopicController extends Controller
     }
 
 
-    public function edit(String $slug)
-    {
-        $topics = Topic::where('is_staus', 1)->where('slug', $slug)->get();
 
-        if (is_null($topics)) {
+    public function edit(String $slug) {
+        $topics = Topic::where('is_status', 1)->where('slug', $slug)->get();
+
+        if($topics->isEmpty()) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -173,6 +170,7 @@ class TopicController extends Controller
             return [
                 'topic_id' => $topic->id,
                 'topic_user_id' => $topic->user_id,
+                'topic_author' => $topic->user->name,
                 'topic_name' => $topic->name,
                 'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,
