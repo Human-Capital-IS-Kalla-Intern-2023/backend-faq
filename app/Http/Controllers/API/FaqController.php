@@ -15,23 +15,37 @@ class FaqController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->get('search'); 
+        $search = $request->get('search');
 
         if ($search) {
             $topics = Topic::search($search)->where('is_active', 1)->get();
             $questions = Question::search($search)->where('is_active', 1)->get();
-        
-            $combinedResults = [$topics, $questions];
+
+            $combinedResults = $topics->merge($questions);
         } else {
-            $combinedResults =Topic::where('is_active', 1)->get();
+            $combinedResults = Topic::where('is_active', 1)->get();
         }
-        
+
+        $transformedTopic = $combinedResults->map(function ($item) {
+            // Assuming $item could be either a Topic or a Question model
+            return [
+                'topics_id' => $item->id,
+                'topics_name' => $item->name,
+                'topics_slug' => $item->slug,
+                'topics_description' => $item->description,
+                'topics_image' => $item->image,
+                'topics_icon' => $item->icon,
+                'topics_is_active' => $item->is_active,
+                'created_at' => $item->created_at,
+                'updated_at' => $item->updated_at,
+            ];
+        });
 
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data topik berhasil diambil',
-            'data' => $combinedResults,
+            'data' => $transformedTopic,
         ], 200);
     }
 
@@ -39,9 +53,7 @@ class FaqController extends Controller
     {
         $topic = Topic::where('is_active', 1)->first();
 
-        $questions = $topic->questions;
-
-        if(is_null($questions)) {
+        if (is_null($topic)) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -50,6 +62,7 @@ class FaqController extends Controller
             ], 404);
         }
 
+        $questions = $topic->questions;
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
         $transformedQuestions = $questions->map(function ($question) {
@@ -88,7 +101,7 @@ class FaqController extends Controller
     {
         $questions = Question::where('is_active', 1)->where('slug', $slug)->with('reviews')->get();
 
-        if(is_null($questions)) {
+        if (is_null($questions)) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -134,7 +147,7 @@ class FaqController extends Controller
     {
         $question = Question::where('is_active', 1)->where('slug', $slug)->first();
 
-        if(is_null($question)) {
+        if (is_null($question)) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -161,7 +174,7 @@ class FaqController extends Controller
     {
         $question = Question::where('is_active', 1)->where('slug', $slug)->first();
 
-        if(is_null($question)) {
+        if (is_null($question)) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -183,5 +196,4 @@ class FaqController extends Controller
             'data' => $reviews,
         ], 200);
     }
-
 }
