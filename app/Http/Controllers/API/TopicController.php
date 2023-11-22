@@ -150,9 +150,9 @@ class TopicController extends Controller
 
 
     public function edit(String $slug) {
-        $topics = Topic::where('is_staus', 1)->where('slug', $slug)->get();
+        $topics = Topic::where('is_status', 1)->where('slug', $slug)->get();
 
-        if(is_null($topics)) {
+        if($topics->isEmpty()) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
