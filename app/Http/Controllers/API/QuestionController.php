@@ -142,6 +142,21 @@ class QuestionController extends Controller
         }
     }
 
+    private function generateUniqueSlug($question)
+    {
+        $slug = Str::slug($question);
+        $uniqueSlug = $slug;
+        $counter = 1;
+
+        while (Question::where('slug', $uniqueSlug)->exists()) {
+            // If the slug already exists, append a counter to make it unique
+            $uniqueSlug = $slug . '-' . $counter;
+            $counter++;
+        }
+
+        return $uniqueSlug;
+    }
+
     public function update(Request $request, Question $question)
     {
 
