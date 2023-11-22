@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('faq/topics', [TopicController::class, 'index']);
 Route::post('faq/topics', [TopicController::class, 'store']);
 Route::get('faq/topics/{slug}', [TopicController::class, 'show']);
+Route::get('faq/topics/edit/{slug}', [TopicController::class, 'edit']);
 Route::put('faq/topics/{slug}', [TopicController::class, 'update']);
 Route::delete('faq/topics/{slug}', [TopicController::class, 'destroy']);
 
