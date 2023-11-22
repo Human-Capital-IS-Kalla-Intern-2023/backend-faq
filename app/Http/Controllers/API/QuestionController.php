@@ -10,9 +10,10 @@ use Illuminate\Support\Str;
 
 class QuestionController extends Controller
 {
-    public function index(Request $request) {
-        
-        $search = $request->get('search'); 
+    public function index(Request $request)
+    {
+
+        $search = $request->get('search');
 
         if ($search) {
             $questions = Question::search($search)->get();
@@ -30,18 +31,18 @@ class QuestionController extends Controller
             return [
                 'id' => $question->id,
                 'question' => $question->question,
-                'slug' => $question->slug,
-                'answer' => $question->answer,
+                'question_slug' => $question->slug,
+                'question_answer' => $question->answer,
                 'likes' => $question->likes,
                 'dislikes' => $question->dislikes,
                 'created_at' => $question->created_at,
                 'updated_at' => $question->updated_at,
                 'deleted_at' => $question->deleted_at,
-                'topics_id' => $topic->id,
-                'topics_name' => $topic->name,
-                'topics_slug' => $topic->slug,
-                'topics_description' => $topic->description,
-                'topics_image' => $topic->image,
+                'topic_id' => $topic->id,
+                'topic_name' => $topic->name,
+                'topic_slug' => $topic->slug,
+                'topic_description' => $topic->description,
+                'topic_image' => $topic->image,
             ];
         });
 
@@ -53,7 +54,8 @@ class QuestionController extends Controller
         ], 200);
     }
 
-    public function show(Question $question) {
+    public function show(Question $question)
+    {
         $questions = Question::where('slug', $question->slug)->with('topics')->get();
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
@@ -63,18 +65,18 @@ class QuestionController extends Controller
             return [
                 'id' => $question->id,
                 'question' => $question->question,
-                'slug' => $question->slug,
-                'answer' => $question->answer,
+                'question_slug' => $question->slug,
+                'question_answer' => $question->answer,
                 'likes' => $question->likes,
                 'dislikes' => $question->dislikes,
                 'created_at' => $question->created_at,
                 'updated_at' => $question->updated_at,
                 'deleted_at' => $question->deleted_at,
-                'topics_id' => $topic->id,
-                'topics_name' => $topic->name,
-                'topics_slug' => $topic->slug,
-                'topics_description' => $topic->description,
-                'topics_image' => $topic->image,
+                'topic_id' => $topic->id,
+                'topic_name' => $topic->name,
+                'topic_slug' => $topic->slug,
+                'topic_description' => $topic->description,
+                'topic_image' => $topic->image,
             ];
         });
 
@@ -86,11 +88,12 @@ class QuestionController extends Controller
         ], 200);
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $validation = $request->validate([
-            'question' => ['required','unique:questions,question','string'],
+            'question' => ['required', 'unique:questions,question', 'string'],
             'answer' => ['required'],
-            'topic_id' => ['array','exists:topics,id,deleted_at,NULL']
+            'topic_id' => ['array', 'exists:topics,id,deleted_at,NULL']
         ]);
 
         DB::beginTransaction();
@@ -106,7 +109,7 @@ class QuestionController extends Controller
             // Attach each topic to the question
             $question->topics()->sync($topicIds);
 
-    
+
             DB::commit();
 
             return response()->json([
@@ -115,25 +118,24 @@ class QuestionController extends Controller
                 'message' => 'Data pertanyaan berhasil diambil',
                 'data' => $question,
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
-    
+
             return response()->json([
                 'status_code' => 500,
                 'status' => 'Error',
                 'message' => 'Data gagal ditambahkan',
             ], 500);
         }
-
     }
 
-    public function update(Request $request, Question $question) {
+    public function update(Request $request, Question $question)
+    {
 
         $validation = $request->validate([
-            'question' => ['required','unique:questions,question,'.$question->slug.',slug','string'],
+            'question' => ['required', 'unique:questions,question,' . $question->slug . ',slug', 'string'],
             'answer' => ['required'],
-            'topic_id' => ['array','exists:topics,id,deleted_at,NULL']
+            'topic_id' => ['array', 'exists:topics,id,deleted_at,NULL']
         ]);
 
         DB::beginTransaction();
@@ -141,22 +143,22 @@ class QuestionController extends Controller
         try {
             // Ambil pertanyaan yang akan diupdate
             $question = Question::where('slug', $question->slug)->first();
-    
+
             // Update atribut pertanyaan
             $question->update([
                 'question' => $request->input('question'),
                 'slug' => Str::slug($request->input('question')),
                 'answer' => $request->input('answer'),
             ]);
-    
+
             // Ambil id topik yang baru dari form
             $topicIds = $request->input('topic_id');
 
             $question->topics()->sync($topicIds);
 
-    
+
             DB::commit();
-    
+
             return response()->json([
                 'status_code' => 200,
                 'status' => 'success',
@@ -165,7 +167,7 @@ class QuestionController extends Controller
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
-    
+
             // Handle the exception, log it, or return an error response
             return response()->json([
                 'status_code' => 500,
@@ -175,7 +177,8 @@ class QuestionController extends Controller
         }
     }
 
-    public function destroy(Question $question) {
+    public function destroy(Question $question)
+    {
         $question = Question::where('slug', $question->slug)->first();
         $question->delete();
 
