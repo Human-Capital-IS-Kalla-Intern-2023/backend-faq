@@ -167,25 +167,26 @@ class QuestionController extends Controller
         return $uniqueSlug;
     }
 
-    public function update(Request $request, Question $question)
+    public function update(Request $request, String $slug)
     {
+        $validTopicIds = Rule::exists('topics', 'id');
 
         $validation = $request->validate([
-            'question' => ['required', 'unique:questions,question,' . $question->slug . ',slug', 'string'],
+            'question' => ['required', 'string'],
             'answer' => ['required'],
-            'topic_id' => ['array', 'exists:topics,id,deleted_at,NULL']
+            'topic_id' => ['array', $validTopicIds]
         ]);
 
         DB::beginTransaction();
 
         try {
             // Ambil pertanyaan yang akan diupdate
-            $question = Question::where('slug', $question->slug)->first();
+            $question = Question::where('slug', $slug)->first();
 
             // Update atribut pertanyaan
             $question->update([
                 'question' => $request->input('question'),
-                'slug' => Str::slug($request->input('question')),
+                'slug' => $this->generateUniqueSlug($request->input('question')),
                 'answer' => $request->input('answer'),
             ]);
 
