@@ -19,6 +19,11 @@ class Question extends Model
         return $this->belongsToMany(Topic::class, 'topic_questions')->withTimestamps();;
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function reviews()
     {
         return $this->hasMany(Review::class);
@@ -32,5 +37,4 @@ class Question extends Model
             // Add other searchable attributes as needed
         ];
     }
-
 }

@@ -10,7 +10,6 @@ use Laravel\Scout\Searchable;
 
 class Topic extends Model
 {
-    
     use HasFactory, Searchable;
 
     protected $guarded = [];
@@ -19,6 +18,11 @@ class Topic extends Model
     public function questions()
     {
         return $this->belongsToMany(Question::class, 'topic_questions')->withTimestamps();;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function toSearchableArray(): array
