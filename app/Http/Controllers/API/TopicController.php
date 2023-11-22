@@ -29,6 +29,7 @@ class TopicController extends Controller
             return [
                 'topic_id' => $topic->id,
                 'topic_user_id' => $topic->user_id,
+                'topic_author' => $topic->user->name,
                 'topic_name' => $topic->name,
                 'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,
@@ -119,6 +120,7 @@ class TopicController extends Controller
             return [
                 'question_id' => $question->id,
                 'question_user_id' => $question->user_id,
+                'question_author' => $question->user->name,
                 'question_name' => $question->question,
                 'question_slug' => $question->slug,
                 'question_answer' => $question->answer,
@@ -128,6 +130,7 @@ class TopicController extends Controller
                 'question_updated_at' => $question->updated_at,
                 'topic_id' => $topic->id,
                 'topic_user_id' => $question->user_id,
+                'topic_author' => $topic->user->name,
                 'topic_name' => $topic->name,
                 'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,
@@ -167,6 +170,7 @@ class TopicController extends Controller
             return [
                 'topic_id' => $topic->id,
                 'topic_user_id' => $topic->user_id,
+                'topic_author' => $topic->user->name,
                 'topic_name' => $topic->name,
                 'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,

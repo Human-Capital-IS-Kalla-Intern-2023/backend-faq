@@ -16,12 +16,12 @@ class QuestionController extends Controller
         $search = $request->get('search');
 
         if ($search) {
-            $questions = Question::search($search)->get();
+            $questions = Question::search($search)->where('is_status', 1)->get();
 
             // Memuat relasi topics untuk setiap pertanyaan
             $questions->load('topics');
         } else {
-            $questions = Question::with('topics')->get();
+            $questions = Question::with('topics')->where('is_status', 1)->get();
         }
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
@@ -33,6 +33,7 @@ class QuestionController extends Controller
             return [
                 'question_id' => $question->id,
                 'question_user_id' => $question->user_id,
+                'question_author' => $question->user->name,
                 'question_name' => $question->question,
                 'question_slug' => $question->slug,
                 'question_answer' => $question->answer,
@@ -41,8 +42,9 @@ class QuestionController extends Controller
                 'question_is_status' => $question->is_status,
                 'created_at_question' => $question->created_at,
                 'updated_at_question' => $question->updated_at,
-                'topic_user_id' => $topic->user_id,
                 'topic_id' => $topic->id,
+                'topic_user_id' => $topic->user_id,
+                'topic_author' => $topic->user->name,
                 'topic_name' => $topic->name,
                 'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,
@@ -58,9 +60,9 @@ class QuestionController extends Controller
         ], 200);
     }
 
-    public function show(Question $question)
+    public function show(String $slug)
     {
-        $questions = Question::where('slug', $question->slug)->with('topics')->get();
+        $questions = Question::where('slug', $slug)->with('topics')->get();
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
         $transformedQuestions = $questions->map(function ($question) {
@@ -71,6 +73,7 @@ class QuestionController extends Controller
             return [
                 'question_id' => $question->id,
                 'question_user_id' => $question->user_id,
+                'question_author' => $question->user->name,
                 'question_name' => $question->question,
                 'question_slug' => $question->slug,
                 'question_answer' => $question->answer,
@@ -80,8 +83,9 @@ class QuestionController extends Controller
                 'created_at' => $question->created_at,
                 'updated_at' => $question->updated_at,
                 'deleted_at' => $question->deleted_at,
-                'topic_user_id' => $topic->user_id,
                 'topic_id' => $topic->id,
+                'topic_user_id' => $topic->user_id,
+                'topic_author' => $topic->user->name,
                 'topic_name' => $topic->name,
                 'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,

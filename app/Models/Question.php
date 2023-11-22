@@ -24,6 +24,11 @@ class Question extends Model
         return $this->hasMany(Review::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function toSearchableArray(): array
     {
         return [

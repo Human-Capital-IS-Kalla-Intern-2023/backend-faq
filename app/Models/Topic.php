@@ -21,6 +21,11 @@ class Topic extends Model
         return $this->belongsToMany(Question::class, 'topic_questions')->withTimestamps();;
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function toSearchableArray(): array
     {
         return [
