@@ -10,9 +10,7 @@ use Laravel\Scout\Searchable;
 
 class Topic extends Model
 {
-    use HasFactory, Searchable;
-
-    protected $fillable = ['name', 'slug', 'description', 'image'];
+    
     use HasFactory, Searchable;
 
     protected $guarded = [];

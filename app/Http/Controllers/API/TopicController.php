@@ -18,9 +18,9 @@ class TopicController extends Controller
     {
         $search = $request->get('search');
         if ($search) {
-            $topics = Topic::search($search)->where('is_active', 1)->get();
+            $topics = Topic::search($search)->where('is_status', 1)->get();
         } else {
-            $topics = Topic::where('is_active', 1)->get();
+            $topics = Topic::where('is_status', 1)->get();
         }
 
          // Transformasi hasil untuk mencocokkan format yang Anda inginkan
@@ -28,12 +28,15 @@ class TopicController extends Controller
 
             return [
                 'topic_id' => $topic->id,
+                'topic_user_id' => $topic->user_id,
                 'topic_name' => $topic->name,
                 'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,
                 'topic_image' => $topic->image,
                 'topic_icon' => $topic->icon,
-                'topic_is_active' => $topic->is_active,
+                'topic_is_status' => $topic->is_status,
+                'topic_created_at' => $topic->created_at,
+                'topic_updated_at' => $topic->updated_at,
             ];
         });
 
@@ -44,12 +47,6 @@ class TopicController extends Controller
             'data' => $transformedTopics,
         ], 200);
 
-        return response()->json([
-            'status_code' => 200,
-            'status' => 'success',
-            'message' => 'Data Topic berhasil diambil',
-            'data' => $topics,
-        ], 200);
     }
 
     /**
@@ -58,9 +55,8 @@ class TopicController extends Controller
     public function store(Request $request)
     {
 
-
         $validation = $request->validate([
-            'user_id' => ['required', 'exists:users,id'],
+            'topic_user_id' => ['required', 'exists:users,id'],
             'topic_name' => ['required', 'unique:topics,name', 'string'],
             'topic_description' => ['required', 'string'],
             'topic_image' => ['nullable','image', 'mimes:png,jpg,jpeg,svg', 'max:1024'],
@@ -68,17 +64,22 @@ class TopicController extends Controller
             'topic_is_status' => ['nullable', 'boolean'],
         ]);
 
-        $imageName = time() . '.' . $request->topic_image->extension();
+        $imageName = "";
+        if ($request->hasFile('topic_image')) {
 
-        // Simpan gambar di folder Storage:
-        $request->topic_image->storeAs('images', $imageName);
+            $imageName = 'images/'.time() . '.' . $request->topic_image->extension();
+
+            // Simpan gambar di folder Storage:
+            $request->topic_image->storeAs('images', $imageName);
+        }
 
         $data = Topic::create([
-            'user_id' => $request->input('user_id'),
+            // 'user_id' => 1,
+            'user_id' => $request->input('topic_user_id'),
             'name' => $request->input('topic_name'),
             'slug' => Str::slug($request->input('topic_name')),
             'description' => $request->input('topic_description'),
-            'image' => 'images/'.$imageName,
+            'image' => $imageName,
             'icon' => $request->input('topic_icon'),
             'is_status' => $request->input('topic_is_status'),
         ]);
@@ -96,7 +97,7 @@ class TopicController extends Controller
      */
     public function show(String $slug)
     {
-        $topic = Topic::where('is_active', 1)->where('slug', $slug)->first();
+        $topic = Topic::where('is_status', 1)->where('slug', $slug)->first();
 
         if(is_null($topic)) {
             return response()->json([
@@ -117,6 +118,7 @@ class TopicController extends Controller
 
             return [
                 'question_id' => $question->id,
+                'question_user_id' => $question->user_id,
                 'question_name' => $question->question,
                 'question_slug' => $question->slug,
                 'question_answer' => $question->answer,
@@ -125,12 +127,15 @@ class TopicController extends Controller
                 'question_created_at' => $question->created_at,
                 'question_updated_at' => $question->updated_at,
                 'topic_id' => $topic->id,
+                'topic_user_id' => $question->user_id,
                 'topic_name' => $topic->name,
                 'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,
                 'topic_image' => $topic->image,
                 'topic_icon' => $topic->icon,
-                'topic_is_active' => $topic->is_active,
+                'topic_is_status' => $topic->is_status,
+                'topic_created_at' => $topic->created_at,
+                'topic_updated_at' => $topic->updated_at,
             ];
         });
 
@@ -145,7 +150,7 @@ class TopicController extends Controller
 
 
     public function edit(String $slug) {
-        $topics = Topic::where('is_active', 1)->where('slug', $slug)->get();
+        $topics = Topic::where('is_staus', 1)->where('slug', $slug)->get();
 
         if(is_null($topics)) {
             return response()->json([
@@ -161,12 +166,15 @@ class TopicController extends Controller
 
             return [
                 'topic_id' => $topic->id,
+                'topic_user_id' => $topic->user_id,
                 'topic_name' => $topic->name,
                 'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,
                 'topic_image' => $topic->image,
                 'topic_icon' => $topic->icon,
                 'topic_is_active' => $topic->is_active,
+                'topic_created_at' => $topic->created_at,
+                'topic_updated_at' => $topic->updated_at,
             ];
         });
 
@@ -184,7 +192,7 @@ class TopicController extends Controller
     public function update(Request $request, String $slug)
     {
         $validation = $request->validate([
-            'user_id' => ['required', 'exists:users,id'],
+            'topic_user_id' => ['required', 'exists:users,id'],
             'topic_name' => ['required', 'unique:topics,name,' . $slug . ',slug', 'string'],
             'topic_description' => ['required', 'string'],
             'topic_image' => ['nullable','image', 'mimes:png,jpg,jpeg,svg', 'max:1024'],
@@ -193,9 +201,9 @@ class TopicController extends Controller
 
         ]);
 
-        // DB::beginTransaction();
+        DB::beginTransaction();
 
-        // try {
+        try {
             // Ambil pertanyaan yang akan diupdate
             $topic = Topic::where('is_status', 1)->where('slug', $slug)->first();
 
@@ -208,7 +216,7 @@ class TopicController extends Controller
                 ], 404);
             }
 
-            $topic->user_id = $request->input('user_id');
+            $topic->user_id = $request->input('topic_user_id');
             $topic->name = $request->input('topic_name');
             $topic->slug = $request->input('topic_name');
             $topic->description = $request->input('topic_description');
@@ -220,7 +228,7 @@ class TopicController extends Controller
                     Storage::delete('public/images/' . $topic->image);
                 }
 
-                $image = $request->file('image');
+                $image = $request->file('topic_image');
                 $imageName = 'images/' . time() . '.' . $image->extension();
                 $image->storeAs('images', $imageName);
                 $topic->image = $imageName;
@@ -238,25 +246,34 @@ class TopicController extends Controller
                 'message' => 'Data topic berhasil diubah',
                 'data' => $topic,
             ], 200);
-        // } catch (\Exception $e) {
-        //     DB::rollBack();
+        } catch (\Exception $e) {
+            DB::rollBack();
 
-        //     // Handle the exception, log it, or return an error response
-        //     return response()->json([
-        //         'status_code' => 500,
-        //         'status' => 'Error',
-        //         'message' => 'Data gagal diubah',
-        //     ], 500);
-        // }
+            // Handle the exception, log it, or return an error response
+            return response()->json([
+                'status_code' => 500,
+                'status' => 'Error',
+                'message' => 'Data gagal diubah',
+            ], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Topic $topic)
+    public function destroy(String $slug)
     {
 
-        $topic = Topic::where('slug', $topic->slug)->first();
+        $topic = Topic::where('slug', $slug)->first();
+
+         // Periksa apakah ada relasi (comment) yang masih ada
+        if ($topic->questions()->count() > 0) {
+            return response()->json([
+                'status_code' => 500,
+                'status' => 'error',
+                'message' => 'Topic tidak dapat dihapus karena masih memiliki pertanyaan',
+            ], 500);
+        }
 
         // Hapus gambar dari penyimpanan
         if ($topic->image) {
