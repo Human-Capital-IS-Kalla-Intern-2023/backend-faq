@@ -7,6 +7,7 @@ use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class QuestionController extends Controller
 {
@@ -103,43 +104,45 @@ class QuestionController extends Controller
 
     public function store(Request $request)
     {
+        $validTopicIds = Rule::exists('topics', 'id');
+
         $validation = $request->validate([
-            'question' => ['required', 'unique:questions,question', 'string'],
+            'question' => ['required', 'string'],
             'answer' => ['required'],
-            'topic_id' => ['array', 'exists:topics,id,deleted_at,NULL']
+            'topic_id' => ['array', $validTopicIds]
         ]);
 
         DB::beginTransaction();
 
-        try {
-            $question = new Question();
-            $question->question = $request->input('question');
-            $question->slug = Str::slug($request->input('question'));
-            $question->answer = $request->input('answer');
-            $question->save();
+        // try {
+        $question = new Question();
+        $question->user_id = $request->input('user_id');
+        $question->question = $request->input('question');
+        $question->slug = $this->generateUniqueSlug($request->input('question'));
+        $question->answer = $request->input('answer');
+        $question->save();
 
-            $topicIds = $request->input('topic_id');
-            // Attach each topic to the question
-            $question->topics()->sync($topicIds);
+        $topicIds = $request->input('topic_id');
+        // Attach each topic to the question
+        $question->topics()->sync($topicIds);
 
+        DB::commit();
 
-            DB::commit();
+        return response()->json([
+            'status_code' => 200,
+            'status' => 'success',
+            'message' => 'Data pertanyaan berhasil diambil',
+            'data' => $question,
+        ], 200);
+        // } catch (\Exception $e) {
+        //     DB::rollBack();
 
-            return response()->json([
-                'status_code' => 200,
-                'status' => 'success',
-                'message' => 'Data pertanyaan berhasil diambil',
-                'data' => $question,
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            return response()->json([
-                'status_code' => 500,
-                'status' => 'Error',
-                'message' => 'Data gagal ditambahkan',
-            ], 500);
-        }
+        //     return response()->json([
+        //         'status_code' => 500,
+        //         'status' => 'Error',
+        //         'message' => 'Data gagal ditambahkan',
+        //     ], 500);
+        // }
     }
 
     private function generateUniqueSlug($question)
@@ -152,6 +155,13 @@ class QuestionController extends Controller
             // If the slug already exists, append a counter to make it unique
             $uniqueSlug = $slug . '-' . $counter;
             $counter++;
+
+            // Check if the result is an array
+            $existingQuestion = Question::where('slug', $uniqueSlug)->first();
+
+            if (!$existingQuestion) {
+                break;
+            }
         }
 
         return $uniqueSlug;
