@@ -15,23 +15,37 @@ class FaqController extends Controller
      */
     public function index(Request $request)
     {
-        $search = $request->get('search'); 
+        $search = $request->get('search');
 
         if ($search) {
-            $topics = Topic::search($search)->where('is_status', 1)->get();
-            $questions = Question::search($search)->where('is_status', 1)->get();
-        
-            $combinedResults = [$topics, $questions];
+            $topics = Topic::search($search)->where('is_active', 1)->get();
+            $questions = Question::search($search)->where('is_active', 1)->get();
+
+            $combinedResults = $topics->merge($questions);
         } else {
-            $combinedResults =Topic::where('is_status', 1)->get();
+            $combinedResults = Topic::where('is_active', 1)->get();
         }
-        
+
+        $transformedTopic = $combinedResults->map(function ($item) {
+            // Assuming $item could be either a Topic or a Question model
+            return [
+                'topic_id' => $item->id,
+                'topic_name' => $item->name,
+                'topic_slug' => $item->slug,
+                'topic_description' => $item->description,
+                'topic_image' => $item->image,
+                'topic_icon' => $item->icon,
+                'topic_is_active' => $item->is_active,
+                'created_at' => $item->created_at,
+                'updated_at' => $item->updated_at,
+            ];
+        });
 
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data topik berhasil diambil',
-            'data' => $combinedResults,
+            'data' => $transformedTopic,
         ], 200);
     }
 
@@ -39,9 +53,7 @@ class FaqController extends Controller
     {
         $topic = Topic::where('is_status', 1)->first();
 
-        $questions = $topic->questions;
-
-        if(is_null($questions)) {
+        if (is_null($topic)) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -50,6 +62,7 @@ class FaqController extends Controller
             ], 404);
         }
 
+        $questions = $topic->questions;
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
         $transformedQuestions = $questions->map(function ($question) {
@@ -58,20 +71,20 @@ class FaqController extends Controller
             $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
             return [
-                'id' => $question->id,
+                'question_id' => $question->id,
                 'question' => $question->question,
-                'slug' => $question->slug,
-                'answer' => $question->answer,
+                'question_slug' => $question->slug,
+                'question_answer' => $question->answer,
                 'likes' => $likesCount,
                 'dislikes' => $dislikesCount,
                 'created_at' => $question->created_at,
                 'updated_at' => $question->updated_at,
-                'topics_id' => $topic->id,
-                'topics_name' => $topic->name,
-                'topics_slug' => $topic->slug,
-                'topics_description' => $topic->description,
-                'topics_image' => $topic->image,
-                'topics_is_status' => $topic->is_status,
+                'topic_id' => $topic->id,
+                'topic_name' => $topic->name,
+                'topic_slug' => $topic->slug,
+                'topic_description' => $topic->description,
+                'topic_image' => $topic->image,
+                'topic_is_active' => $topic->is_active,
             ];
         });
 
@@ -88,7 +101,7 @@ class FaqController extends Controller
     {
         $questions = Question::where('is_status', 1)->where('slug', $slug)->with('reviews')->get();
 
-        if(is_null($questions)) {
+        if (is_null($questions)) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -105,20 +118,20 @@ class FaqController extends Controller
             $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
             return [
-                'id' => $question->id,
+                'question_id' => $question->id,
                 'question' => $question->question,
-                'slug' => $question->slug,
-                'answer' => $question->answer,
+                'question_slug' => $question->slug,
+                'question_answer' => $question->answer,
                 'likes' => $likesCount,
                 'dislikes' => $dislikesCount,
                 'created_at' => $question->created_at,
                 'updated_at' => $question->updated_at,
-                'topics_id' => $topic->id,
-                'topics_name' => $topic->name,
-                'topics_slug' => $topic->slug,
-                'topics_description' => $topic->description,
-                'topics_image' => $topic->image,
-                'topics_is_status' => $topic->is_status,
+                'topic_id' => $topic->id,
+                'topic_name' => $topic->name,
+                'topic_slug' => $topic->slug,
+                'topic_description' => $topic->description,
+                'topic_image' => $topic->image,
+                'topic_is_active' => $topic->is_active,
             ];
         });
 
@@ -134,7 +147,7 @@ class FaqController extends Controller
     {
         $question = Question::where('is_status', 1)->where('slug', $slug)->first();
 
-        if(is_null($question)) {
+        if (is_null($question)) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -161,7 +174,7 @@ class FaqController extends Controller
     {
         $question = Question::where('is_status', 1)->where('slug', $slug)->first();
 
-        if(is_null($question)) {
+        if (is_null($question)) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -183,5 +196,4 @@ class FaqController extends Controller
             'data' => $reviews,
         ], 200);
     }
-
 }
