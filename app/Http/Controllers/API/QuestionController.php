@@ -107,8 +107,8 @@ class QuestionController extends Controller
         $validTopicIds = Rule::exists('topics', 'id');
 
         $validation = $request->validate([
-            'question' => ['required', 'string'],
-            'answer' => ['required'],
+            'question_name' => ['required', 'string'],
+            'question_answer' => ['required'],
             'topic_id' => ['array', $validTopicIds]
         ]);
 
@@ -117,9 +117,9 @@ class QuestionController extends Controller
         // try {
         $question = new Question();
         $question->user_id = $request->input('user_id');
-        $question->question = $request->input('question');
-        $question->slug = $this->generateUniqueSlug($request->input('question'));
-        $question->answer = $request->input('answer');
+        $question->question = $request->input('question_name');
+        $question->slug = $this->generateUniqueSlug($request->input('question_name'));
+        $question->answer = $request->input('question_answer');
         $question->save();
 
         $topicIds = $request->input('topic_id');
@@ -172,8 +172,8 @@ class QuestionController extends Controller
         $validTopicIds = Rule::exists('topics', 'id');
 
         $validation = $request->validate([
-            'question' => ['required', 'string'],
-            'answer' => ['required'],
+            'question_name' => ['required', 'string'],
+            'question_answer' => ['required'],
             'topic_id' => ['array', $validTopicIds]
         ]);
 
@@ -185,9 +185,9 @@ class QuestionController extends Controller
 
             // Update atribut pertanyaan
             $question->update([
-                'question' => $request->input('question'),
-                'slug' => $this->generateUniqueSlug($request->input('question')),
-                'answer' => $request->input('answer'),
+                'question' => $request->input('question_name'),
+                'slug' => $this->generateUniqueSlug($request->input('question_name')),
+                'answer' => $request->input('question_answer'),
             ]);
 
             // Ambil id topik yang baru dari form
