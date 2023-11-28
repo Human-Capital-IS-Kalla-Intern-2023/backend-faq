@@ -20,13 +20,13 @@ class FaqController extends Controller
         $results = "";
 
         if ($search) {
-            
+
             $questions = Question::search($search)->where('is_status', 1)->get();
 
             // Memuat relasi topics untuk setiap pertanyaan
             $questions->load('topics');
 
-             // Transformasi hasil untuk mencocokkan format yang Anda inginkan
+            // Transformasi hasil untuk mencocokkan format yang Anda inginkan
             $results = $questions->map(function ($question) {
                 $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
                 $likesCount = $question->reviews()->where('likes', 1)->count();
@@ -36,7 +36,7 @@ class FaqController extends Controller
                     'question_id' => $question->id,
                     'question_user_id' => $question->user_id,
                     'question_name' => $question->question,
-                    'question_slug' => $question->slug,
+                    'slug' => $question->slug,
                     'question_answer' => $question->answer,
                     'question_likes' => $likesCount,
                     'question_dislikes' => $dislikesCount,
@@ -46,15 +46,14 @@ class FaqController extends Controller
                     'topic_user_id' => $topic->user_id,
                     'topic_id' => $topic->id,
                     'topic_name' => $topic->name,
-                    'topic_slug' => $topic->slug,
+                    'slug' => $topic->slug,
                     'topic_description' => $topic->description,
                     'topic_image' => $topic->image,
                 ];
             });
-
         } else {
             $combinedResults = Topic::where('is_status', 1)->get();
-            
+
             $results = $combinedResults->map(function ($item) {
                 // Assuming $item could be either a Topic or a Question model
                 return [
@@ -104,7 +103,7 @@ class FaqController extends Controller
             return [
                 'question_id' => $question->id,
                 'question_name' => $question->question,
-                'question_slug' => $question->slug,
+                'slug' => $question->slug,
                 'question_answer' => $question->answer,
                 'question_likes' => $likesCount,
                 'question_dislikes' => $dislikesCount,
@@ -112,7 +111,7 @@ class FaqController extends Controller
                 'question_updated_at' => $question->updated_at,
                 'topic_id' => $topic->id,
                 'topic_name' => $topic->name,
-                'topic_slug' => $topic->slug,
+                'slug' => $topic->slug,
                 'topic_description' => $topic->description,
                 'topic_image' => $topic->image,
                 'topic_icon' => $topic->icon,
@@ -152,7 +151,7 @@ class FaqController extends Controller
             return [
                 'question_id' => $question->id,
                 'question_name' => $question->question,
-                'question_slug' => $question->slug,
+                'slug' => $question->slug,
                 'question_answer' => $question->answer,
                 'question_likes' => $likesCount,
                 'question_dislikes' => $dislikesCount,
@@ -160,7 +159,7 @@ class FaqController extends Controller
                 'question_updated_at' => $question->updated_at,
                 'topic_id' => $topic->id,
                 'topic_name' => $topic->name,
-                'topic_slug' => $topic->slug,
+                'slug' => $topic->slug,
                 'topic_description' => $topic->description,
                 'topic_image' => $topic->image,
                 'topic_is_status' => $topic->is_status,
