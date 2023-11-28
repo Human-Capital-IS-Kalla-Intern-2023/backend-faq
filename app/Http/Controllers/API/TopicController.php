@@ -31,7 +31,7 @@ class TopicController extends Controller
                 'topic_user_id' => $topic->user_id,
                 'topic_author' => $topic->user->name,
                 'topic_name' => $topic->name,
-                'slug' => $topic->slug,
+                'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,
                 'topic_image' => $topic->image,
                 'topic_icon' => $topic->icon,
@@ -59,26 +59,18 @@ class TopicController extends Controller
             'topic_user_id' => ['required', 'exists:users,id'],
             'topic_name' => ['required', 'unique:topics,name', 'string'],
             'topic_description' => ['required', 'string'],
-            'topic_image' => ['nullable', 'string', 'regex:/^data:image\/(jpeg|jpg|png|svg\+xml);base64,/', 'mimes:jpeg,jpg,png,svg'],
+            'topic_image' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg', 'max:1024'],
             'topic_icon' => ['nullable', 'string'],
             'topic_is_status' => ['nullable', 'boolean'],
         ]);
 
         $imageName = "";
-        if ($request->has('topic_image')) {
-            // Decode base64 image data
-            $imageData = base64_decode(preg_replace('/^data:image\/(jpeg|jpg|png|svg\+xml);base64,/', '', $request->input('topic_image')));
+        if ($request->hasFile('topic_image')) {
 
-            $extension = $request->file('topic_image')->getClientOriginalExtension();
+            $imageName = 'images/' . time() . '.' . $request->topic_image->extension();
 
-            // Generate a unique filename with an appropriate extension
-            $imageName = 'images/' . time() . '.' . $extension;
-
-            // Save the image directly using file_put_contents
-            file_put_contents(public_path($imageName), $imageData);
-
-            // Alternatively, you can use Laravel Storage to store the image
-            // Storage::put('public/' . $imageName, $imageData);
+            // Simpan gambar di folder Storage:
+            $request->topic_image->storeAs('images', $imageName);
         }
 
         $data = Topic::create([
@@ -129,7 +121,7 @@ class TopicController extends Controller
                 'question_user_id' => $question->user_id,
                 'question_author' => $question->user->name,
                 'question_name' => $question->question,
-                'slug' => $question->slug,
+                'question_slug' => $question->slug,
                 'question_answer' => $question->answer,
                 'question_likes' => $likesCount,
                 'question_dislikes' => $dislikesCount,
@@ -139,7 +131,7 @@ class TopicController extends Controller
                 'topic_user_id' => $question->user_id,
                 'topic_author' => $topic->user->name,
                 'topic_name' => $topic->name,
-                'slug' => $topic->slug,
+                'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,
                 'topic_image' => $topic->image,
                 'topic_icon' => $topic->icon,
@@ -160,11 +152,10 @@ class TopicController extends Controller
 
 
 
-    public function edit(String $slug)
-    {
+    public function edit(String $slug) {
         $topics = Topic::where('is_status', 1)->where('slug', $slug)->get();
 
-        if ($topics->isEmpty()) {
+        if($topics->isEmpty()) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -181,7 +172,7 @@ class TopicController extends Controller
                 'topic_user_id' => $topic->user_id,
                 'topic_author' => $topic->user->name,
                 'topic_name' => $topic->name,
-                'slug' => $topic->slug,
+                'topic_slug' => $topic->slug,
                 'topic_description' => $topic->description,
                 'topic_image' => $topic->image,
                 'topic_icon' => $topic->icon,
@@ -230,7 +221,7 @@ class TopicController extends Controller
 
             $topic->user_id = $request->input('topic_user_id');
             $topic->name = $request->input('topic_name');
-            $topic->slug = Str::slug($request->input('topic_name'));
+            $topic->slug = $request->input('topic_name');
             $topic->description = $request->input('topic_description');
 
             // Mengelola gambar jika diunggah
