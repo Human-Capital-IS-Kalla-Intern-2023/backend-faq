@@ -20,41 +20,41 @@ class FaqController extends Controller
         $results = "";
 
         if ($search) {
-            
+
             $questions = Question::search($search)->where('is_status', 1)->get();
 
             // Memuat relasi topics untuk setiap pertanyaan
             $questions->load('topics');
 
-             // Transformasi hasil untuk mencocokkan format yang Anda inginkan
-            $results = $questions->map(function ($question) {
-                $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
-                $likesCount = $question->reviews()->where('likes', 1)->count();
-                $dislikesCount = $question->reviews()->where('likes', 0)->count();
+            // Transformasi hasil untuk mencocokkan format yang Anda inginkan
+            // $results = $questions->map(function ($question) {
+            //     $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
+            //     $likesCount = $question->reviews()->where('likes', 1)->count();
+            //     $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
-                return [
-                    'question_id' => $question->id,
-                    'question_user_id' => $question->user_id,
-                    'question_name' => $question->question,
-                    'question_slug' => $question->slug,
-                    'question_answer' => $question->answer,
-                    'question_likes' => $likesCount,
-                    'question_dislikes' => $dislikesCount,
-                    'question_is_status' => $question->is_status,
-                    'created_at_question' => $question->created_at,
-                    'updated_at_question' => $question->updated_at,
-                    'topic_user_id' => $topic->user_id,
-                    'topic_id' => $topic->id,
-                    'topic_name' => $topic->name,
-                    'topic_slug' => $topic->slug,
-                    'topic_description' => $topic->description,
-                    'topic_image' => $topic->image,
-                ];
-            });
+            //     return [
+            //         'question_id' => $question->id,
+            //         'question_user_id' => $question->user_id,
+            //         'question_name' => $question->question,
+            //         'question_slug' => $question->slug,
+            //         'question_answer' => $question->answer,
+            //         'question_likes' => $likesCount,
+            //         'question_dislikes' => $dislikesCount,
+            //         'question_is_status' => $question->is_status,
+            //         'created_at_question' => $question->created_at,
+            //         'updated_at_question' => $question->updated_at,
+            //         'topic_user_id' => $topic->user_id,
+            //         'topic_id' => $topic->id,
+            //         'topic_name' => $topic->name,
+            //         'topic_slug' => $topic->slug,
+            //         'topic_description' => $topic->description,
+            //         'topic_image' => $topic->image,
+            //     ];
+            // });
 
         } else {
             $combinedResults = Topic::where('is_status', 1)->get();
-            
+
             $results = $combinedResults->map(function ($item) {
                 // Assuming $item could be either a Topic or a Question model
                 return [
@@ -96,36 +96,36 @@ class FaqController extends Controller
         $questions = $topic->questions;
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
-        $transformedQuestions = $questions->map(function ($question) {
-            $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
-            $likesCount = $question->reviews()->where('likes', 1)->count();
-            $dislikesCount = $question->reviews()->where('likes', 0)->count();
+        // $transformedQuestions = $questions->map(function ($question) {
+        //     $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
+        //     $likesCount = $question->reviews()->where('likes', 1)->count();
+        //     $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
-            return [
-                'question_id' => $question->id,
-                'question_name' => $question->question,
-                'question_slug' => $question->slug,
-                'question_answer' => $question->answer,
-                'question_likes' => $likesCount,
-                'question_dislikes' => $dislikesCount,
-                'question_created_at' => $question->created_at,
-                'question_updated_at' => $question->updated_at,
-                'topic_id' => $topic->id,
-                'topic_name' => $topic->name,
-                'topic_slug' => $topic->slug,
-                'topic_description' => $topic->description,
-                'topic_image' => $topic->image,
-                'topic_icon' => $topic->icon,
-                'topic_is_status' => $topic->is_status,
-            ];
-        });
+        //     return [
+        //         'question_id' => $question->id,
+        //         'question_name' => $question->question,
+        //         'question_slug' => $question->slug,
+        //         'question_answer' => $question->answer,
+        //         'question_likes' => $likesCount,
+        //         'question_dislikes' => $dislikesCount,
+        //         'question_created_at' => $question->created_at,
+        //         'question_updated_at' => $question->updated_at,
+        //         'topic_id' => $topic->id,
+        //         'topic_name' => $topic->name,
+        //         'topic_slug' => $topic->slug,
+        //         'topic_description' => $topic->description,
+        //         'topic_image' => $topic->image,
+        //         'topic_icon' => $topic->icon,
+        //         'topic_is_status' => $topic->is_status,
+        //     ];
+        // });
 
 
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
-            'data' => $transformedQuestions,
+            'data' => $questions,
         ], 200);
     }
 
@@ -144,34 +144,34 @@ class FaqController extends Controller
 
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
-        $transformedQuestions = $questions->map(function ($question) {
-            $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
-            $likesCount = $question->reviews()->where('likes', 1)->count();
-            $dislikesCount = $question->reviews()->where('likes', 0)->count();
+        // $transformedQuestions = $questions->map(function ($question) {
+        //     $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
+        //     $likesCount = $question->reviews()->where('likes', 1)->count();
+        //     $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
-            return [
-                'question_id' => $question->id,
-                'question_name' => $question->question,
-                'question_slug' => $question->slug,
-                'question_answer' => $question->answer,
-                'question_likes' => $likesCount,
-                'question_dislikes' => $dislikesCount,
-                'question_created_at' => $question->created_at,
-                'question_updated_at' => $question->updated_at,
-                'topic_id' => $topic->id,
-                'topic_name' => $topic->name,
-                'topic_slug' => $topic->slug,
-                'topic_description' => $topic->description,
-                'topic_image' => $topic->image,
-                'topic_is_status' => $topic->is_status,
-            ];
-        });
+        //     return [
+        //         'question_id' => $question->id,
+        //         'question_name' => $question->question,
+        //         'question_slug' => $question->slug,
+        //         'question_answer' => $question->answer,
+        //         'question_likes' => $likesCount,
+        //         'question_dislikes' => $dislikesCount,
+        //         'question_created_at' => $question->created_at,
+        //         'question_updated_at' => $question->updated_at,
+        //         'topic_id' => $topic->id,
+        //         'topic_name' => $topic->name,
+        //         'topic_slug' => $topic->slug,
+        //         'topic_description' => $topic->description,
+        //         'topic_image' => $topic->image,
+        //         'topic_is_status' => $topic->is_status,
+        //     ];
+        // });
 
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
-            'data' => $transformedQuestions,
+            'data' => $questions,
         ], 200);
     }
 
