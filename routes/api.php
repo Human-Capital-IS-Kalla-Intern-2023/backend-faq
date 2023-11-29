@@ -21,13 +21,6 @@ use Illuminate\Support\Facades\Route;
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
 
-Route::get('faq', [FaqController::class, 'index']);
-Route::get('faq/{name}', [FaqController::class, 'topic']);
-Route::get('faq/{name}/{slug}', [FaqController::class, 'question']);
-
-Route::post('faq/{name}/{slug}/like', [FaqController::class, 'like'])->name('like');
-Route::post('faq/{name}/{slug}/dislike', [FaqController::class, 'dislike'])->name('dislike');
-
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [UserController::class, 'fetch']);
@@ -47,6 +40,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('faq/questions/{slug}', [QuestionController::class, 'destroy']);
 });
 
+Route::get('faq', [FaqController::class, 'index']);
+Route::get('faq/{name}', [FaqController::class, 'topic']);
+Route::get('faq/{name}/{slug}', [FaqController::class, 'question']);
+
+Route::post('faq/{name}/{slug}/like', [FaqController::class, 'like'])->name('like');
+Route::post('faq/{name}/{slug}/dislike', [FaqController::class, 'dislike'])->name('dislike');
 
 
 
