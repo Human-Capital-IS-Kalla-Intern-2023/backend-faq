@@ -23,31 +23,30 @@ class TopicController extends Controller
             $topics = Topic::where('is_status', 1)->get();
         }
 
-         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
-        $transformedTopics = $topics->map(function ($topic) {
+        // Transformasi hasil untuk mencocokkan format yang Anda inginkan
+        // $transformedTopics = $topics->map(function ($topic) {
 
-            return [
-                'topic_id' => $topic->id,
-                'topic_user_id' => $topic->user_id,
-                'topic_author' => $topic->user->name,
-                'topic_name' => $topic->name,
-                'topic_slug' => $topic->slug,
-                'topic_description' => $topic->description,
-                'topic_image' => $topic->image,
-                'topic_icon' => $topic->icon,
-                'topic_is_status' => $topic->is_status,
-                'topic_created_at' => $topic->created_at,
-                'topic_updated_at' => $topic->updated_at,
-            ];
-        });
+        //     return [
+        //         'topic_id' => $topic->id,
+        //         'topic_user_id' => $topic->user_id,
+        //         'topic_author' => $topic->user->name,
+        //         'topic_name' => $topic->name,
+        //         'topic_slug' => $topic->slug,
+        //         'topic_description' => $topic->description,
+        //         'topic_image' => $topic->image,
+        //         'topic_icon' => $topic->icon,
+        //         'topic_is_status' => $topic->is_status,
+        //         'topic_created_at' => $topic->created_at,
+        //         'topic_updated_at' => $topic->updated_at,
+        //     ];
+        // });
 
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
-            'data' => $transformedTopics,
+            'data' => $topics,
         ], 200);
-
     }
 
     /**
@@ -60,7 +59,7 @@ class TopicController extends Controller
             'topic_user_id' => ['required', 'exists:users,id'],
             'topic_name' => ['required', 'unique:topics,name', 'string'],
             'topic_description' => ['required', 'string'],
-            'topic_image' => ['nullable','image', 'mimes:png,jpg,jpeg,svg', 'max:1024'],
+            'topic_image' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg', 'max:1024'],
             'topic_icon' => ['nullable', 'string'],
             'topic_is_status' => ['nullable', 'boolean'],
         ]);
@@ -68,7 +67,7 @@ class TopicController extends Controller
         $imageName = "";
         if ($request->hasFile('topic_image')) {
 
-            $imageName = 'images/'.time() . '.' . $request->topic_image->extension();
+            $imageName = 'images/' . time() . '.' . $request->topic_image->extension();
 
             // Simpan gambar di folder Storage:
             $request->topic_image->storeAs('images', $imageName);
@@ -100,7 +99,7 @@ class TopicController extends Controller
     {
         $topic = Topic::where('is_status', 1)->where('slug', $slug)->first();
 
-        if(is_null($topic)) {
+        if (is_null($topic)) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -112,50 +111,52 @@ class TopicController extends Controller
         $questions = $topic->questions;
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
-        $transformedQuestions = $questions->map(function ($question) {
-            $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
-            $likesCount = $question->reviews()->where('likes', 1)->count();
-            $dislikesCount = $question->reviews()->where('likes', 0)->count();
+        // $transformedQuestions = $questions->map(function ($question) {
+        //     $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
+        //     $likesCount = $question->reviews()->where('likes', 1)->count();
+        //     $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
-            return [
-                'question_id' => $question->id,
-                'question_user_id' => $question->user_id,
-                'question_author' => $question->user->name,
-                'question_name' => $question->question,
-                'question_slug' => $question->slug,
-                'question_answer' => $question->answer,
-                'question_likes' => $likesCount,
-                'question_dislikes' => $dislikesCount,
-                'question_created_at' => $question->created_at,
-                'question_updated_at' => $question->updated_at,
-                'topic_id' => $topic->id,
-                'topic_user_id' => $question->user_id,
-                'topic_author' => $topic->user->name,
-                'topic_name' => $topic->name,
-                'topic_slug' => $topic->slug,
-                'topic_description' => $topic->description,
-                'topic_image' => $topic->image,
-                'topic_icon' => $topic->icon,
-                'topic_is_status' => $topic->is_status,
-                'topic_created_at' => $topic->created_at,
-                'topic_updated_at' => $topic->updated_at,
-            ];
-        });
+        //     return [
+        //         'question_id' => $question->id,
+        //         'question_user_id' => $question->user_id,
+        //         'question_author' => $question->user->name,
+        //         'question_name' => $question->question,
+        //         'question_slug' => $question->slug,
+        //         'question_answer' => $question->answer,
+        //         'question_likes' => $likesCount,
+        //         'question_dislikes' => $dislikesCount,
+        //         'question_created_at' => $question->created_at,
+        //         'question_updated_at' => $question->updated_at,
+        //         'topic_id' => $topic->id,
+        //         'topic_user_id' => $question->user_id,
+        //         'topic_author' => $topic->user->name,
+        //         'topic_name' => $topic->name,
+        //         'topic_slug' => $topic->slug,
+        //         'topic_description' => $topic->description,
+        //         'topic_image' => $topic->image,
+        //         'topic_icon' => $topic->icon,
+        //         'topic_is_status' => $topic->is_status,
+        //         'topic_created_at' => $topic->created_at,
+        //         'topic_updated_at' => $topic->updated_at,
+        //     ];
+        // });
 
 
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
-            'data' => $transformedQuestions,
+            'data' => $questions,
         ], 200);
     }
 
 
-    public function edit(String $slug) {
+
+    public function edit(String $slug)
+    {
         $topics = Topic::where('is_status', 1)->where('slug', $slug)->get();
 
-        if($topics->isEmpty()) {
+        if ($topics->isEmpty()) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -165,30 +166,29 @@ class TopicController extends Controller
         }
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
-        $transformedTopics = $topics->map(function ($topic) {
+        // $transformedTopics = $topics->map(function ($topic) {
 
-            return [
-                'topic_id' => $topic->id,
-                'topic_user_id' => $topic->user_id,
-                'topic_author' => $topic->user->name,
-                'topic_name' => $topic->name,
-                'topic_slug' => $topic->slug,
-                'topic_description' => $topic->description,
-                'topic_image' => $topic->image,
-                'topic_icon' => $topic->icon,
-                'topic_is_active' => $topic->is_active,
-                'topic_created_at' => $topic->created_at,
-                'topic_updated_at' => $topic->updated_at,
-            ];
-        });
+        //     return [
+        //         'topic_id' => $topic->id,
+        //         'topic_user_id' => $topic->user_id,
+        //         'topic_author' => $topic->user->name,
+        //         'topic_name' => $topic->name,
+        //         'topic_slug' => $topic->slug,
+        //         'topic_description' => $topic->description,
+        //         'topic_image' => $topic->image,
+        //         'topic_icon' => $topic->icon,
+        //         'topic_is_active' => $topic->is_active,
+        //         'topic_created_at' => $topic->created_at,
+        //         'topic_updated_at' => $topic->updated_at,
+        //     ];
+        // });
 
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
-            'data' => $transformedTopics,
+            'data' => $topics,
         ], 200);
-
     }
     /**
      * Update the specified resource in storage.
@@ -199,7 +199,7 @@ class TopicController extends Controller
             'topic_user_id' => ['required', 'exists:users,id'],
             'topic_name' => ['required', 'unique:topics,name,' . $slug . ',slug', 'string'],
             'topic_description' => ['required', 'string'],
-            'topic_image' => ['nullable','image', 'mimes:png,jpg,jpeg,svg', 'max:1024'],
+            'topic_image' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg', 'max:1024'],
             'topic_icon' => ['nullable', 'string'],
             'topic_is_status' => ['nullable', 'boolean'],
 
@@ -211,7 +211,7 @@ class TopicController extends Controller
             // Ambil pertanyaan yang akan diupdate
             $topic = Topic::where('is_status', 1)->where('slug', $slug)->first();
 
-            if(is_null($topic)) {
+            if (is_null($topic)) {
                 return response()->json([
                     'status_code' => 404,
                     'status' => 'Error',
@@ -270,7 +270,7 @@ class TopicController extends Controller
 
         $topic = Topic::where('slug', $slug)->first();
 
-         // Periksa apakah ada relasi (comment) yang masih ada
+        // Periksa apakah ada relasi (comment) yang masih ada
         if ($topic->questions()->count() > 0) {
             return response()->json([
                 'status_code' => 500,

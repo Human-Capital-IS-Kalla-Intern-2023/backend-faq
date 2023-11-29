@@ -37,5 +37,4 @@ class Question extends Model
             // Add other searchable attributes as needed
         ];
     }
-
 }
