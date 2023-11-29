@@ -26,38 +26,38 @@ class QuestionController extends Controller
         }
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
-        $transformedQuestions = $questions->map(function ($question) {
-            $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
-            $likesCount = $question->reviews()->where('likes', 1)->count();
-            $dislikesCount = $question->reviews()->where('likes', 0)->count();
+        // $transformedQuestions = $questions->map(function ($question) {
+        //     $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
+        //     $likesCount = $question->reviews()->where('likes', 1)->count();
+        //     $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
-            return [
-                'question_id' => $question->id,
-                'question_user_id' => $question->user_id,
-                'question_author' => $question->user->name,
-                'question_name' => $question->question,
-                'question_slug' => $question->slug,
-                'question_answer' => $question->answer,
-                'question_likes' => $likesCount,
-                'question_dislikes' => $dislikesCount,
-                'question_is_status' => $question->is_status,
-                'created_at_question' => $question->created_at,
-                'updated_at_question' => $question->updated_at,
-                'topic_id' => $topic->id,
-                'topic_user_id' => $topic->user_id,
-                'topic_author' => $topic->user->name,
-                'topic_name' => $topic->name,
-                'topic_slug' => $topic->slug,
-                'topic_description' => $topic->description,
-                'topic_image' => $topic->image,
-            ];
-        });
+        //     return [
+        //         'question_id' => $question->id,
+        //         'question_user_id' => $question->user_id,
+        //         'question_author' => $question->user->name,
+        //         'question_name' => $question->question,
+        //         'question_slug' => $question->slug,
+        //         'question_answer' => $question->answer,
+        //         'question_likes' => $likesCount,
+        //         'question_dislikes' => $dislikesCount,
+        //         'question_is_status' => $question->is_status,
+        //         'created_at_question' => $question->created_at,
+        //         'updated_at_question' => $question->updated_at,
+        //         'topic_id' => $topic->id,
+        //         'topic_user_id' => $topic->user_id,
+        //         'topic_author' => $topic->user->name,
+        //         'topic_name' => $topic->name,
+        //         'topic_slug' => $topic->slug,
+        //         'topic_description' => $topic->description,
+        //         'topic_image' => $topic->image,
+        //     ];
+        // });
 
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
-            'data' => $transformedQuestions,
+            'data' => $questions,
         ], 200);
     }
 
@@ -66,39 +66,39 @@ class QuestionController extends Controller
         $questions = Question::where('slug', $slug)->with('topics')->get();
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
-        $transformedQuestions = $questions->map(function ($question) {
-            $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
-            $likesCount = $question->reviews()->where('likes', 1)->count();
-            $dislikesCount = $question->reviews()->where('likes', 0)->count();
+        // $transformedQuestions = $questions->map(function ($question) {
+        //     $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
+        //     $likesCount = $question->reviews()->where('likes', 1)->count();
+        //     $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
-            return [
-                'question_id' => $question->id,
-                'question_user_id' => $question->user_id,
-                'question_author' => $question->user->name,
-                'question_name' => $question->question,
-                'question_slug' => $question->slug,
-                'question_answer' => $question->answer,
-                'question_likes' => $likesCount,
-                'question_dislikes' => $dislikesCount,
-                'question_is_status' => $question->is_status,
-                'created_at' => $question->created_at,
-                'updated_at' => $question->updated_at,
-                'deleted_at' => $question->deleted_at,
-                'topic_id' => $topic->id,
-                'topic_user_id' => $topic->user_id,
-                'topic_author' => $topic->user->name,
-                'topic_name' => $topic->name,
-                'topic_slug' => $topic->slug,
-                'topic_description' => $topic->description,
-                'topic_image' => $topic->image,
-            ];
-        });
+        //     return [
+        //         'question_id' => $question->id,
+        //         'question_user_id' => $question->user_id,
+        //         'question_author' => $question->user->name,
+        //         'question_name' => $question->question,
+        //         'question_slug' => $question->slug,
+        //         'question_answer' => $question->answer,
+        //         'question_likes' => $likesCount,
+        //         'question_dislikes' => $dislikesCount,
+        //         'question_is_status' => $question->is_status,
+        //         'created_at' => $question->created_at,
+        //         'updated_at' => $question->updated_at,
+        //         'deleted_at' => $question->deleted_at,
+        //         'topic_id' => $topic->id,
+        //         'topic_user_id' => $topic->user_id,
+        //         'topic_author' => $topic->user->name,
+        //         'topic_name' => $topic->name,
+        //         'topic_slug' => $topic->slug,
+        //         'topic_description' => $topic->description,
+        //         'topic_image' => $topic->image,
+        //     ];
+        // });
 
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
-            'data' => $transformedQuestions,
+            'data' => $questions,
         ], 200);
     }
 
