@@ -26,5 +26,17 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
+        // $this->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+        //     if ($request->is('api/*')) {
+        //         return response()->json([
+        //             'errors' => [
+        //                 'status' => 401,
+        //                 'message' => 'Unauthenticated',
+        //                 'details' => 'User not have token, try login to obatain token'
+        //             ]
+        //         ], 401);
+        //     }
+        // });
     }
 }
