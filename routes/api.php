@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
 
@@ -42,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('faq', [FaqController::class, 'index']);
 Route::get('faq/{name}', [FaqController::class, 'topic']);
+Route::get('navbar', [FaqController::class, 'navbar']);
 Route::get('faq/{name}/{slug}', [FaqController::class, 'question']);
 
 Route::post('faq/{name}/{slug}/like', [FaqController::class, 'like'])->name('like');

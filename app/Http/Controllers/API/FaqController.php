@@ -68,14 +68,25 @@ class FaqController extends Controller
                 'message' => 'Data topik berhasil diambil',
                 'data' => $combinedResults,
             ], 200);
-
         }
+    }
 
+    public function navbar(Request $request)
+    {
+        $topics = Topic::with('questions')->get();
+        // $questions = Question::with('topics', 'user')->where('is_status', 1)->get();
+
+        return response()->json([
+            'status_code' => 200,
+            'status' => 'success',
+            'message' => 'Data topik berhasil diambil',
+            'data' => $topics
+        ], 200);
     }
 
     public function topic(String $slug)
     {
-        $topic = Topic::where('is_status', 1)->where('slug', $slug)->with('questions.user','user')->first();
+        $topic = Topic::where('is_status', 1)->where('slug', $slug)->with('questions.user', 'user')->first();
 
         if (is_null($topic)) {
             return response()->json([
