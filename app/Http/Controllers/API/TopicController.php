@@ -19,11 +19,11 @@ class TopicController extends Controller
     {
         $search = $request->get('search');
         if ($search) {
-            $topics = Topic::search($search)->where('is_status', 1)->get();
+            $topics = Topic::search($search)->get();
 
             $topics->load('user');
         } else {
-            $topics = Topic::where('is_status', 1)->with('user')->get();
+            $topics = Topic::with('user')->get();
         }
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
