@@ -225,16 +225,20 @@ class TopicController extends Controller
             $topic->description = $request->input('description');
 
             // Mengelola gambar jika diunggah
-            if ($request->hasFile('image')) {
+            if ($request->hasFile('image') || $request->input('icon')) {
                 // Hapus gambar dari penyimpanan
                 if ($topic->image) {
                     Storage::delete('public/topic_image' . $topic->image);
+                    $image = $request->file('topic_image');
+                    $imageName = time() . '.' . $image->extension();
+                    $image->storeAs('public/topic_image', $imageName);
+                    $topic->image = $imageName;
                 }
-
-                $image = $request->file('topic_image');
-                $imageName = time() . '.' . $image->extension();
-                $image->storeAs('public/topic_image', $imageName);
-                $topic->image = $imageName;
+                if ($request->input('icon')) {
+                    Storage::delete('public/topic_image' . $topic->image);
+                    $topic->image = '';
+                    $topic->icon = $request->input('icon');
+                }
             }
             $topic->is_status = $request->input('is_status');
             $topic->save();
