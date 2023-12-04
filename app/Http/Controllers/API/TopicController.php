@@ -22,7 +22,6 @@ class TopicController extends Controller
             $topics = Topic::search($search)->where('is_status', 1)->get();
 
             $topics->load('user');
-
         } else {
             $topics = Topic::where('is_status', 1)->with('user')->get();
         }
@@ -99,7 +98,7 @@ class TopicController extends Controller
      */
     public function show(String $slug)
     {
-        $topic = Topic::where('is_status', 1)->where('slug', $slug)->with('questions','user')->first();
+        $topic = Topic::where('is_status', 1)->where('slug', $slug)->with('questions', 'user')->first();
 
         if (is_null($topic)) {
             return response()->json([
@@ -299,6 +298,26 @@ class TopicController extends Controller
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data topic berhasil dihapus',
+            'data' => $topic,
+        ], 200);
+    }
+
+    public function updateIsActive(Request $request, String $slug)
+    {
+        $validation = $this->validate($request, [
+            'is_status' => 'required|boolean',
+        ]);
+
+        $topic = Topic::where('slug', $slug)->first();
+
+        $topic->update([
+            'is_status' => $request->is_status,
+        ]);
+
+        return response()->json([
+            'status_code' => 200,
+            'status' => 'success',
+            'message' => $topic->is_status . ' berhasil diubah',
             'data' => $topic,
         ], 200);
     }
