@@ -23,7 +23,7 @@ class QuestionController extends Controller
             // Memuat relasi topics untuk setiap pertanyaan
             $questions->load('topics', 'user');
         } else {
-            $questions = Question::with('topics','user')->where('is_status', 1)->get();
+            $questions = Question::with('topics', 'user')->where('is_status', 1)->get();
         }
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
@@ -255,6 +255,26 @@ class QuestionController extends Controller
             'status' => 'success',
             'message' => 'Data berhasi dihapus',
             'data' => $question,
+        ], 200);
+    }
+
+    public function updateIsActive(Request $request, String $slug)
+    {
+        $validation = $this->validate($request, [
+            'is_status' => 'required|boolean',
+        ]);
+
+        $topic = Question::where('slug', $slug)->first();
+
+        $topic->update([
+            'is_status' => $request->is_status,
+        ]);
+
+        return response()->json([
+            'status_code' => 200,
+            'status' => 'success',
+            'message' => $topic->is_status . ' berhasil diubah',
+            'data' => $topic,
         ], 200);
     }
 }
