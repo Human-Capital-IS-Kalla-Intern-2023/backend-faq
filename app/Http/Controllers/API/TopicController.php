@@ -72,7 +72,7 @@ class TopicController extends Controller
             $imageName = time() . '.' . $request->image->extension();
 
             // Simpan gambar di folder Storage:
-            $request->image->storeAs('images', $imageName);
+            $request->image->storeAs('public/topic_image', $imageName);
         }
 
         $data = Topic::create([
@@ -228,12 +228,12 @@ class TopicController extends Controller
             if ($request->hasFile('image')) {
                 // Hapus gambar dari penyimpanan
                 if ($topic->image) {
-                    Storage::delete('images/' . $topic->image);
+                    Storage::delete('public/topic_image' . $topic->image);
                 }
 
                 $image = $request->file('topic_image');
                 $imageName = time() . '.' . $image->extension();
-                $image->storeAs('images', $imageName);
+                $image->storeAs('public/topic_image', $imageName);
                 $topic->image = $imageName;
             }
             $topic->is_status = $request->input('is_status');
@@ -288,7 +288,7 @@ class TopicController extends Controller
 
         // Hapus gambar dari penyimpanan
         if ($topic->image) {
-            Storage::delete('images/' . $topic->image);
+            Storage::delete('public/topic_image' . $topic->image);
         }
 
         // Hapus data dari database
