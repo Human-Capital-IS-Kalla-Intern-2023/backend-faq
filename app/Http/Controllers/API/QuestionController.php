@@ -18,12 +18,12 @@ class QuestionController extends Controller
         $search = $request->get('search');
 
         if ($search) {
-            $questions = Question::search($search)->where('is_status', 1)->get();
+            $questions = Question::search($search)->get();
 
             // Memuat relasi topics untuk setiap pertanyaan
             $questions->load('topics', 'user');
         } else {
-            $questions = Question::with('topics', 'user')->where('is_status', 1)->get();
+            $questions = Question::with('topics', 'user')->get();
         }
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
