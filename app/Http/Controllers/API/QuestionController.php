@@ -18,47 +18,42 @@ class QuestionController extends Controller
         $search = $request->get('search');
 
         if ($search) {
-            $questions = Question::search($search)->where('is_status', 1)->get();
+            $questions = Question::search($search)->get();
 
             // Memuat relasi topics untuk setiap pertanyaan
             $questions->load('topics', 'user');
         } else {
-            $questions = Question::with('topics','user')->where('is_status', 1)->get();
+            $questions = Question::with('topics', 'user')->get();
         }
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
-        // $transformedQuestions = $questions->map(function ($question) {
-        //     $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
-        //     $likesCount = $question->reviews()->where('likes', 1)->count();
-        //     $dislikesCount = $question->reviews()->where('likes', 0)->count();
+        $transformedQuestions = $questions->map(function ($question) {
+            $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
+            $likesCount = $question->reviews()->where('likes', 1)->count();
+            $dislikesCount = $question->reviews()->where('likes', 0)->count();
 
-        //     return [
-        //         'question_id' => $question->id,
-        //         'question_user_id' => $question->user_id,
-        //         'question_author' => $question->user->name,
-        //         'question_name' => $question->question,
-        //         'question_slug' => $question->slug,
-        //         'question_answer' => $question->answer,
-        //         'question_likes' => $likesCount,
-        //         'question_dislikes' => $dislikesCount,
-        //         'question_is_status' => $question->is_status,
-        //         'created_at_question' => $question->created_at,
-        //         'updated_at_question' => $question->updated_at,
-        //         'topic_id' => $topic->id,
-        //         'topic_user_id' => $topic->user_id,
-        //         'topic_author' => $topic->user->name,
-        //         'topic_name' => $topic->name,
-        //         'topic_slug' => $topic->slug,
-        //         'topic_description' => $topic->description,
-        //         'topic_image' => $topic->image,
-        //     ];
-        // });
+            return [
+                'id' => $question->id,
+                'user_id' => $question->user_id,
+                'question' => $question->question,
+                'slug' => $question->slug,
+                'answer' => $question->answer,
+                'likes' => $likesCount,
+                'dislikes' => $dislikesCount,
+                'is_status' => $question->is_status,
+                'created_at' => $question->created_at,
+                'updated_at' => $question->updated_at,
+                'topics' => $question->topics,
+                'user' => $question->user,
+
+            ];
+        });
 
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
-            'data' => $questions,
+            'data' => $transformedQuestions,
         ], 200);
     }
 
@@ -255,6 +250,26 @@ class QuestionController extends Controller
             'status' => 'success',
             'message' => 'Data berhasi dihapus',
             'data' => $question,
+        ], 200);
+    }
+
+    public function updateIsActive(Request $request, String $slug)
+    {
+        $validation = $this->validate($request, [
+            'is_status' => 'required|boolean',
+        ]);
+
+        $topic = Question::where('slug', $slug)->first();
+
+        $topic->update([
+            'is_status' => $request->is_status,
+        ]);
+
+        return response()->json([
+            'status_code' => 200,
+            'status' => 'success',
+            'message' => $topic->is_status . ' berhasil diubah',
+            'data' => $topic,
         ], 200);
     }
 }

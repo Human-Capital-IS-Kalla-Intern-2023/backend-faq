@@ -33,12 +33,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('faq/topics/edit/{slug}', [TopicController::class, 'edit']);
     Route::put('faq/topics/{slug}', [TopicController::class, 'update']);
     Route::delete('faq/topics/{slug}', [TopicController::class, 'destroy']);
+    Route::put('faq/topics/is_active/{slug}', [TopicController::class, 'updateIsActive']);
 
     Route::get('faq/questions', [QuestionController::class, 'index']);
     Route::post('faq/questions', [QuestionController::class, 'store']);
     Route::get('faq/questions/{slug}', [QuestionController::class, 'show']);
     Route::put('faq/questions/{slug}', [QuestionController::class, 'update']);
     Route::delete('faq/questions/{slug}', [QuestionController::class, 'destroy']);
+    Route::put('faq/questions/is_active/{slug}', [QuestionController::class, 'updateIsActive']);
 });
 
 Route::get('faq', [FaqController::class, 'index']);

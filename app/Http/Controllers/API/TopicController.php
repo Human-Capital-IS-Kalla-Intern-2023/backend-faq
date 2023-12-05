@@ -19,12 +19,11 @@ class TopicController extends Controller
     {
         $search = $request->get('search');
         if ($search) {
-            $topics = Topic::search($search)->where('is_status', 1)->get();
+            $topics = Topic::search($search)->get();
 
             $topics->load('user');
-
         } else {
-            $topics = Topic::where('is_status', 1)->with('user')->get();
+            $topics = Topic::with('user')->get();
         }
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
@@ -73,7 +72,7 @@ class TopicController extends Controller
             $imageName = time() . '.' . $request->image->extension();
 
             // Simpan gambar di folder Storage:
-            $request->image->storeAs('images', $imageName);
+            $request->image->storeAs('public/topic_image', $imageName);
         }
 
         $data = Topic::create([
@@ -99,7 +98,7 @@ class TopicController extends Controller
      */
     public function show(String $slug)
     {
-        $topic = Topic::where('is_status', 1)->where('slug', $slug)->with('questions','user')->first();
+        $topic = Topic::where('is_status', 1)->where('slug', $slug)->with('questions', 'user')->first();
 
         if (is_null($topic)) {
             return response()->json([
@@ -226,16 +225,20 @@ class TopicController extends Controller
             $topic->description = $request->input('description');
 
             // Mengelola gambar jika diunggah
-            if ($request->hasFile('image')) {
+            if ($request->hasFile('image') || $request->input('icon')) {
                 // Hapus gambar dari penyimpanan
                 if ($topic->image) {
-                    Storage::delete('images/' . $topic->image);
+                    Storage::delete('public/topic_image' . $topic->image);
+                    $image = $request->file('topic_image');
+                    $imageName = time() . '.' . $image->extension();
+                    $image->storeAs('public/topic_image', $imageName);
+                    $topic->image = $imageName;
                 }
-
-                $image = $request->file('topic_image');
-                $imageName = time() . '.' . $image->extension();
-                $image->storeAs('images', $imageName);
-                $topic->image = $imageName;
+                if ($request->input('icon')) {
+                    Storage::delete('public/topic_image' . $topic->image);
+                    $topic->image = '';
+                    $topic->icon = $request->input('icon');
+                }
             }
             $topic->is_status = $request->input('is_status');
             $topic->save();
@@ -289,7 +292,7 @@ class TopicController extends Controller
 
         // Hapus gambar dari penyimpanan
         if ($topic->image) {
-            Storage::delete('images/' . $topic->image);
+            Storage::delete('public/topic_image' . $topic->image);
         }
 
         // Hapus data dari database
@@ -299,6 +302,26 @@ class TopicController extends Controller
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data topic berhasil dihapus',
+            'data' => $topic,
+        ], 200);
+    }
+
+    public function updateIsActive(Request $request, String $slug)
+    {
+        $validation = $this->validate($request, [
+            'is_status' => 'required|boolean',
+        ]);
+
+        $topic = Topic::where('slug', $slug)->first();
+
+        $topic->update([
+            'is_status' => $request->is_status,
+        ]);
+
+        return response()->json([
+            'status_code' => 200,
+            'status' => 'success',
+            'message' => $topic->is_status . ' berhasil diubah',
             'data' => $topic,
         ], 200);
     }
