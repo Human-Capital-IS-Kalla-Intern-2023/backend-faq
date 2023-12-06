@@ -125,7 +125,7 @@ class QuestionsTableSeeder extends Seeder
             [
                 "user_id" => 1,
                 "question" => "Apakah dapat membeli sparepart/aksesoris tanpa datang ke bengkel",
-                "slug" => "apakah-dapat-membeli-sparepart/aksesoris-tanpa-datang-ke-bengkel",
+                "slug" => "apakah-dapat-membeli-sparepart-aksesoris-tanpa-datang-ke-bengkel",
                 "answer" => "Bisa melalui aplikasi KTOS (Kalla Service) menyediakan layanan pembelian spare part / aksesoris.",
                 "is_status" => 1,
                 'created_at' => date('Y-m-d H:i:s', time()),
