@@ -23,8 +23,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
 
-Route::get('/auth/ess', [EssLoginController::class, 'redirect']);
-Route::get('/auth/ess/callback', [EssLoginController::class, 'callback']);
+Route::get('/auth/ess', [\App\Http\Controllers\API\EssLoginController::class, 'redirect']);
+Route::get('/auth/ess/callback', [\App\Http\Controllers\API\EssLoginController::class, 'callback']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [UserController::class, 'fetch']);
