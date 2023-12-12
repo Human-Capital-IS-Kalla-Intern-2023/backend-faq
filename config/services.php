@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'ess' => [
+        'client_id' => env('ESS_CLIENT_ID'),
+        'client_secret' => env('ESS_CLIENT_SECRET'),
+        'redirect' => env('ESS_REDIRECT'),
+    ],
+
 ];
