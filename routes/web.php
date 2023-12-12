@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+// Route::get('/auth/ess/callback', [\App\Http\Controllers\API\EssLoginController::class, 'callback']);
 
 
 Route::middleware([

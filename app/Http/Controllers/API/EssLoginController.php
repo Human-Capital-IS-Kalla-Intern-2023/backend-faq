@@ -24,11 +24,13 @@ class EssLoginController extends Controller
     public function callback()
     {
         try {
-            $user = Socialite::driver('ess')->user();
+            $user = Socialite::driver('ess')->stateless()->user();
+
             $findUser = User::query()->where('ess_id', $user->uid)->first();
             if ($findUser) {
                 Auth::login($findUser);
                 return redirect()->intended('/');
+
             } else {
                 $newUser = User::query()->create([
                     'ess_id' => $user->uid,
@@ -43,7 +45,7 @@ class EssLoginController extends Controller
         } catch (\Exception $e) {
             Log::error($e);
 
-            return response('Something went wrong!', 500);
+            return response('Something went wrong!'.$e , 500);
         }
     }
 }
