@@ -7,7 +7,6 @@ use App\Http\Controllers\API\QuestionController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -20,7 +19,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('register', [UserController::class, 'register']);
-Route::post('login', [UserController::class, 'login']);
+// Route::post('login', [UserController::class, 'login']);
+
 
 
 Route::middleware('auth:sanctum')->group(function () {
