@@ -98,9 +98,19 @@ class TopicController extends Controller
      */
     public function show(String $slug)
     {
-        $topic = Topic::where('is_status', 1)->where('slug', $slug)->with('questions', 'user')->first();
+        // $topics = Topic::where('is_status', 1)->where('slug', $slug)->with('questions', 'user');
 
-        if (is_null($topic)) {
+        $topics = Topic::where('is_status', 1)
+            ->where('slug', $slug)
+            ->with([
+                'questions' => function ($query) {
+                    $query->with('user', 'reviews'); // Mengambil data pertanyaan, user, dan reviews
+                },
+                'user'
+            ],)
+            ->get();
+
+        if (is_null($topics)) {
             return response()->json([
                 'status_code' => 404,
                 'status' => 'Error',
@@ -109,44 +119,22 @@ class TopicController extends Controller
             ], 404);
         }
 
+        foreach ($topics as $topic) {
+            foreach ($topic->questions as $question) {
+                $likes = $question->reviews->where('likes', 1)->count();;
+                $dislikes = $question->reviews->where('likes', 0)->count();
 
-        // Transformasi hasil untuk mencocokkan format yang Anda inginkan
-        // $transformedQuestions = $questions->map(function ($question) {
-        //     $topic = $question->topics->first(); // Asumsikan setiap pertanyaan hanya terkait dengan satu topik
-        //     $likesCount = $question->reviews()->where('likes', 1)->count();
-        //     $dislikesCount = $question->reviews()->where('likes', 0)->count();
-
-        //     return [
-        //         'question_id' => $question->id,
-        //         'question_user_id' => $question->user_id,
-        //         'question_author' => $question->user->name,
-        //         'question_name' => $question->question,
-        //         'question_slug' => $question->slug,
-        //         'question_answer' => $question->answer,
-        //         'question_likes' => $likesCount,
-        //         'question_dislikes' => $dislikesCount,
-        //         'question_created_at' => $question->created_at,
-        //         'question_updated_at' => $question->updated_at,
-        //         'topic_id' => $topic->id,
-        //         'topic_user_id' => $question->user_id,
-        //         'topic_author' => $topic->user->name,
-        //         'topic_name' => $topic->name,
-        //         'topic_slug' => $topic->slug,
-        //         'topic_description' => $topic->description,
-        //         'topic_image' => $topic->image,
-        //         'topic_icon' => $topic->icon,
-        //         'topic_is_status' => $topic->is_status,
-        //         'topic_created_at' => $topic->created_at,
-        //         'topic_updated_at' => $topic->updated_at,
-        //     ];
-        // });
-
+                // Menambahkan informasi likes dan dislikes ke dalam data pertanyaan
+                $question->likes = $likes;
+                $question->dislikes = $dislikes;
+            }
+        }
 
         return response()->json([
             'status_code' => 200,
             'status' => 'success',
             'message' => 'Data pertanyaan berhasil diambil',
-            'data' => $topic,
+            'data' => $topics,
         ], 200);
     }
 

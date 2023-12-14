@@ -48,7 +48,7 @@ class EssProvider extends AbstractProvider implements ProviderInterface
     {
         $response = $this->getHttpClient()->get('https://hcis-dev3.kallagroup.co.id/api/user', [
             RequestOptions::HEADERS => [
-                'Authorization' => 'Bearer ' . $token,
+                'Authorization' => 'Bearer '.$token,
             ],
         ]);
 

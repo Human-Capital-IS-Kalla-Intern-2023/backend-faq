@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -15,7 +13,7 @@ class EssLoginController extends Controller
     public function redirect()
     {
         if (Auth::check()) {
-            return redirect()->intended('/');
+            return redirect('http://localhost:3000/home');
         }
 
         return Socialite::driver('ess')->redirect();
@@ -28,7 +26,7 @@ class EssLoginController extends Controller
             $findUser = User::query()->where('ess_id', $user->uid)->first();
             if ($findUser) {
                 Auth::login($findUser);
-                return redirect()->intended('/');
+            return redirect('http://localhost:3000/home');
             } else {
                 $newUser = User::query()->create([
                     'ess_id' => $user->uid,
@@ -38,7 +36,7 @@ class EssLoginController extends Controller
                     'password' => bcrypt(Str::random(5)),
                 ]);
                 Auth::login($newUser);
-                return redirect()->intended('/');
+            return redirect('http://localhost:3000/home');
             }
         } catch (\Exception $e) {
             Log::error($e);
