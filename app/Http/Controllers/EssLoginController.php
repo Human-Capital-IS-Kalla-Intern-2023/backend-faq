@@ -26,7 +26,10 @@ class EssLoginController extends Controller
             $findUser = User::query()->where('ess_id', $user->uid)->first();
             if ($findUser) {
                 Auth::login($findUser);
-                return redirect('http://localhost:3000/home');
+
+                $tokenResult = $findUser->createToken('authToken')->plainTextToken;
+                return redirect('http://localhost:3000/callback?token=' . $tokenResult);
+
             } else {
                 $newUser = User::query()->create([
                     'ess_id' => $user->uid,
@@ -36,11 +39,13 @@ class EssLoginController extends Controller
                     'password' => bcrypt(Str::random(5)),
                 ]);
                 Auth::login($newUser);
-                return redirect('http://localhost:3000/home');
+                $tokenResult = $newUser->createToken('authToken')->plainTextToken;
+                return redirect('http://localhost:3000/callback?token=' . $tokenResult);
             }
         } catch (\Exception $e) {
             Log::error($e);
 
+            // return Socialite::driver('ess')->redirect();
             return response('Something went wrong!', 500);
         }
     }

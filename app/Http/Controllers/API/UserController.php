@@ -17,9 +17,9 @@ class UserController extends Controller
     {
         try {
             $request->validate([
-                'name' => ['required','string','max:255'],
-                'email' => ['required','string','email','max:255','unique:users'],
-                'password' => ['required','string', new Password],
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+                'password' => ['required', 'string', new Password],
             ]);
 
             User::create([
@@ -41,8 +41,7 @@ class UserController extends Controller
                     'token_type' => 'Bearer',
                     'user' => $user,
                 ]
-        ], 200);
-        
+            ], 200);
         } catch (Exception $error) {
             return response()->json([
                 'status_code' => 500,
@@ -55,13 +54,13 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => ['required','string','email'],
-            'password' => ['required','string'],
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
         ]);
 
-        $credentials = request(['email','password']);
+        $credentials = request(['email', 'password']);
 
-        if(!Auth::attempt($credentials)) {
+        if (!Auth::attempt($credentials)) {
             return response()->json([
                 'status_code' => 500,
                 'status' => 'Error',
@@ -72,16 +71,12 @@ class UserController extends Controller
 
             $user = User::where('email', $request->email)->first();
 
-            if(!Hash::check($request->password, $user->password, [])) {
-                throw new \Exception('Invalid Credentials');
+            if (!Hash::check($request->password, $user->password, [])) {
+                throw new Exception('Invalid Credentials');
             }
 
             $tokenResult = $user->createToken('authToken')->plainTextToken;
-            // return ResponseFormatter::success([
-            //     'access_token' => $tokenResult,
-            //     'token_type' => 'Bearer',
-            //     'user' => $user
-            // ], 'Login Berhasil');
+
             return response()->json([
                 'status_code' => 200,
                 'status' => 'success',
@@ -92,8 +87,7 @@ class UserController extends Controller
                     'user' => $user,
                 ]
             ], 200);
-
-        } catch(Exception $error) {
+        } catch (Exception $error) {
             return response()->json([
                 'status_code' => 500,
                 'status' => 'Error',
@@ -110,7 +104,6 @@ class UserController extends Controller
             'message' => 'Data profile user berhasil ditambahkan',
             'data' => $request->user()
         ], 200);
-
     }
 
     public function logout(Request $request)
@@ -123,6 +116,5 @@ class UserController extends Controller
             'message' => 'Token Revoked',
             'data' => $token
         ], 200);
-
     }
 }
