@@ -23,3 +23,5 @@ Route::get('/', function () {
 Route::get('/auth/ess', [EssLoginController::class, 'redirect']);
 
 Route::get('/auth/ess/callback', [EssLoginController::class, 'callback']);
+
+Route::post('/logout', [EssLoginController::class, 'logout']);
