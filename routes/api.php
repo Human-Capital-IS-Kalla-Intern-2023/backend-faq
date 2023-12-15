@@ -29,7 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('faq/topics', [TopicController::class, 'store']);
     Route::get('faq/topics/{slug}', [TopicController::class, 'show']);
     Route::get('faq/topics/edit/{slug}', [TopicController::class, 'edit']);
-    Route::put('faq/topics/{slug}', [TopicController::class, 'update']);
+    Route::post('faq/topics/{slug}', [TopicController::class, 'update']);
     Route::delete('faq/topics/{slug}', [TopicController::class, 'destroy']);
     Route::put('faq/topics/is_active/{slug}', [TopicController::class, 'updateIsActive']);
 
