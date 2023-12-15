@@ -13,7 +13,10 @@ class EssLoginController extends Controller
     public function redirect()
     {
         if (Auth::check()) {
-            return redirect('http://localhost:3000/home');
+            $user = Auth::user();
+            $tokenResult = $user->createToken('authToken')->plainTextToken;
+
+            return redirect('http://localhost:3000/callback?token=' . $tokenResult);
         }
 
         return Socialite::driver('ess')->redirect();
