@@ -59,7 +59,7 @@ class QuestionController extends Controller
 
     public function show(String $slug)
     {
-        $question = Question::where('slug', $slug)->with('topics', 'user')->first();
+        $question = Question::where('slug', $slug)->with('topics', 'user', 'reviews')->first();
 
         if (is_null($question)) {
             return response()->json([
@@ -69,6 +69,13 @@ class QuestionController extends Controller
                 'data' => null,
             ], 404);
         }
+
+        $likes = $question->reviews()->where('likes', 1)->count();
+        $dislikes = $question->reviews()->where('likes', 0)->count();
+
+        // Add likes and dislikes to the question data
+        $question->likes = $likes;
+        $question->dislikes = $dislikes;
 
         // Transformasi hasil untuk mencocokkan format yang Anda inginkan
         // $transformedQuestions = $questions->map(function ($question) {
