@@ -181,76 +181,41 @@ class TopicController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, String $slug)
+    public function update(Request $request, $slug)
     {
         $validation = $request->validate([
-            'name' => ['required', 'unique:topics,name,' . $slug . ',slug', 'string'],
+            'name' => ['required', 'unique:topics,name,' . $request->id, 'string'],
             'description' => ['required', 'string'],
             'image' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg', 'max:1024'],
             'icon' => ['nullable', 'string'],
             'is_status' => ['nullable', 'boolean'],
-
         ]);
 
-        DB::beginTransaction();
+        $imageName = "";
+        if ($request->hasFile('image')) {
 
-        try {
-            // Ambil pertanyaan yang akan diupdate
-            $topic = Topic::where('is_status', 1)->where('slug', $slug)->first();
+            $imageName = time() . '.' . $request->image->extension();
 
-            if (is_null($topic)) {
-                return response()->json([
-                    'status_code' => 404,
-                    'status' => 'Error',
-                    'message' => 'Data not found',
-                    'data' => null,
-                ], 404);
-            }
-
-            $topic->user_id = Auth::user()->id;
-            $topic->name = $request->input('name');
-            $topic->slug = Str::slug($request->input('name'));
-            $topic->description = $request->input('description');
-
-            // Mengelola gambar jika diunggah
-            if ($request->hasFile('image') || $request->input('icon')) {
-                // Hapus gambar dari penyimpanan
-                if ($topic->image) {
-                    Storage::delete('public/topic_image' . $topic->image);
-                    $image = $request->file('topic_image');
-                    $imageName = time() . '.' . $image->extension();
-                    $image->storeAs('public/topic_image', $imageName);
-                    $topic->image = $imageName;
-                }
-                if ($request->input('icon')) {
-                    Storage::delete('public/topic_image' . $topic->image);
-                    $topic->image = '';
-                    $topic->icon = $request->input('icon');
-                }
-            }
-            $topic->is_status = $request->input('is_status');
-            $topic->save();
-
-
-
-            DB::commit();
-
-            return response()->json([
-                'status_code' => 200,
-                'status' => 'success',
-                'message' => 'Data topic berhasil diubah',
-                'data' => $topic,
-            ], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            // Handle the exception, log it, or return an error response
-            return response()->json([
-                'status_code' => 500,
-                'status' => 'Error',
-                'message' => 'Data gagal diubah',
-            ], 500);
+            // Simpan gambar di folder Storage:
+            $request->image->storeAs('public/topic_image', $imageName);
         }
+
+        $data = Topic::where('slug', $slug)->update([
+            'user_id' => Auth::user()->id,
+            'name' => $request->input('name'),
+            'slug' => Str::slug($request->input('name')),
+            'description' => $request->input('description'),
+            'image' => $imageName,
+            'icon' => $request->input('icon'),
+            'is_status' => $request->input('is_status'),
+        ]);
+
+        return response()->json([
+            'status_code' => 200,
+            'status' => 'success',
+            'message' => 'Topic berhasil diperbarui',
+            'data' => $data,
+        ], 200);
     }
 
     /**
