@@ -213,9 +213,10 @@ class TopicController extends Controller
             'slug' => Str::slug($request->input('name')),
             'description' => $request->input('description'),
             'image' => $imageName,
-            'icon' => $request->input('icon'),
+            'icon' => $request->has('icon') ? $request->input('icon') : $topic->icon,
             'is_status' => $request->input('is_status'),
         ]);
+
 
         return response()->json([
             'status_code' => 200,
