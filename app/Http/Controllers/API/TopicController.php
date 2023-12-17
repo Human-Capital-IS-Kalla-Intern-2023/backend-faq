@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class TopicController extends Controller
 {
@@ -183,8 +184,14 @@ class TopicController extends Controller
      */
     public function update(Request $request, $slug)
     {
+        $topic = Topic::where('slug', $slug)->first();
+
         $validation = $request->validate([
-            'name' => ['required', 'unique:topics,name,' . $request->id, 'string'],
+            'name' => [
+                'required',
+                Rule::unique('topics', 'name')->ignore($topic->id),
+                'string'
+            ],
             'description' => ['required', 'string'],
             'image' => ['nullable', 'image', 'mimes:png,jpg,jpeg,svg', 'max:1024'],
             'icon' => ['nullable', 'string'],
